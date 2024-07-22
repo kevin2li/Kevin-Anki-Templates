@@ -1,0 +1,59 @@
+
+<!-- Author: Kevin2li -->
+<!-- Github: https://github.com/kevin2li -->
+<div id='q_div'>{{Front}}</div>
+{{#Hint}}
+<div>提示: {{Hint}}</div>
+{{/Hint}}
+<hr id=answer>
+<div id='a_div'></div>
+<script type="text/javascript">
+    var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
+    var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    var idx = 0;
+    var cloze_ids = new Array();
+    function free_guess_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Back}}`;
+        var a_div = document.getElementById("a_div");
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let span = document.createElement("span");
+            span.className = "cloze-hide";
+            span.setAttribute("cloze_id", `c${index}`);
+            span.setAttribute("cloze_text", content);
+            span.innerHTML = mask;
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        a_div.innerHTML = final_html_content;
+        document.querySelectorAll("span[cloze_id]").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(a_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+    }
+    free_guess_init();
+</script>

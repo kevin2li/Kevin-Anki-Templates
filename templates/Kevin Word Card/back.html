@@ -1,0 +1,509 @@
+<script>
+    // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+    if (void 0 === window.Persistence) { var e = "github.com/SimonLammer/anki-persistence/", t = "_default"; if (window.Persistence_sessionStorage = function () { var i = !1; try { "object" == typeof window.sessionStorage && (i = !0, this.clear = function () { for (var t = 0; t < sessionStorage.length; t++) { var i = sessionStorage.key(t); 0 == i.indexOf(e) && (sessionStorage.removeItem(i), t--) } }, this.setItem = function (i, n) { void 0 == n && (n = i, i = t), sessionStorage.setItem(e + i, JSON.stringify(n)) }, this.getItem = function (i) { return void 0 == i && (i = t), JSON.parse(sessionStorage.getItem(e + i)) }, this.removeItem = function (i) { void 0 == i && (i = t), sessionStorage.removeItem(e + i) }, this.getAllKeys = function () { for (var t = [], i = Object.keys(sessionStorage), n = 0; n < i.length; n++) { var s = i[n]; 0 == s.indexOf(e) && t.push(s.substring(e.length, s.length)) } return t.sort() }) } catch (n) { } this.isAvailable = function () { return i } }, window.Persistence_windowKey = function (i) { var n = window[i], s = !1; "object" == typeof n && (s = !0, this.clear = function () { n[e] = {} }, this.setItem = function (i, s) { void 0 == s && (s = i, i = t), n[e][i] = s }, this.getItem = function (i) { return void 0 == i && (i = t), void 0 == n[e][i] ? null : n[e][i] }, this.removeItem = function (i) { void 0 == i && (i = t), delete n[e][i] }, this.getAllKeys = function () { return Object.keys(n[e]) }, void 0 == n[e] && this.clear()), this.isAvailable = function () { return s } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var i = window.location.toString().indexOf("title"), n = window.location.toString().indexOf("main", i); i > 0 && n > 0 && n - i < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+{{#Image}}
+<div class="card">
+    <div class="image-container">
+        {{Image}}
+        <div class="mask-overlay"></div>
+    </div>
+    {{#Source}}
+    <div>{{Source}}</div>
+    {{/Source}}
+</div>
+<hr id="answer" />
+{{/Image}}
+
+<div>
+    <h1 class="word">
+        {{word}}
+    </h1>
+    <hr id="anwser">
+    <div id="tags">
+    </div>
+    <div id="phonetic">
+        {{phonetic}}
+    </div>
+    <div id="variants">
+    </div>
+    <div id="img">
+    </div>
+    <div id="definition">
+    </div>
+    <div id="dist_container" style="display:flex;">
+        <div id="meaning_dist" style="width:200px;height:200px"></div>
+        <div id="pos_dist" style="width:200px;height:200px"></div>
+    </div>
+    <div id="sentence">
+    </div>
+    <div id="phrases">
+    </div>
+    <div id="affix">
+    </div>
+    <div id="links">
+    </div>
+</div>
+
+<script>
+    var idx = 0;
+    var cloze_ids = new Array();
+    var flags = new Array();
+    if (Persistence.isAvailable()) {
+        idx = Persistence.getItem("idx");
+        cloze_ids = Persistence.getItem("cloze_ids");
+        flags = Persistence.getItem("flags");
+    }
+    console.log({ idx });
+    var mode = "{{Mode}}";
+
+    function free_guess_init() { }
+
+    function mask_one_guess_one_multi_init() { }
+
+    function mask_all_guess_one_multi_init() {
+        const Masks = JSON.parse("{{Masks}}");
+        const container = document.querySelector(".image-container");
+        const img = container.querySelector("img");
+        const maskOverlay = document.querySelector(".mask-overlay");
+        maskOverlay.innerHTML = "";
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        const target_index = "{{Index}}";
+        for (const [index, group] of Masks.entries()) {
+            let cloze_id = `c${index + 1}`;
+            cloze_ids.push(cloze_id);
+            if (cloze_id === target_index) {
+                for (let i = 0; i < group.length; i++) {
+                    let mask = group[i];
+                    const maskArea = document.createElement("a");
+                    maskArea.style.position = "absolute";
+                    maskArea.style.left = mask[0] * imgWidth + "px";
+                    maskArea.style.top = mask[1] * imgHeight + "px";
+                    maskArea.style.width = mask[2] * imgWidth + "px";
+                    maskArea.style.height = mask[3] * imgHeight + "px";
+                    maskArea.style.pointerEvents = "auto";
+                    maskArea.style.opacity = 0.1;
+                    maskArea.setAttribute("cloze_id", cloze_id);
+                    maskArea.className = "overlay";
+                    maskArea.onclick = function () {
+                        [].forEach.call(
+                            maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                            (ele) => {
+                                ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                            }
+                        );
+                    };
+                    maskOverlay.appendChild(maskArea);
+                }
+            } else {
+                for (let i = 0; i < group.length; i++) {
+                    let mask = group[i];
+                    const maskArea = document.createElement("a");
+                    maskArea.style.position = "absolute";
+                    maskArea.style.left = mask[0] * imgWidth + "px";
+                    maskArea.style.top = mask[1] * imgHeight + "px";
+                    maskArea.style.width = mask[2] * imgWidth + "px";
+                    maskArea.style.height = mask[3] * imgHeight + "px";
+                    maskArea.style.pointerEvents = "auto";
+                    maskArea.style.opacity = 1;
+                    maskArea.className = "overlay-second";
+                    maskArea.setAttribute("cloze_id", cloze_id);
+                    maskArea.onclick = function () {
+                        [].forEach.call(
+                            maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                            (ele) => {
+                                ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                            }
+                        );
+                    };
+                    maskOverlay.appendChild(maskArea);
+                }
+            }
+        }
+    }
+
+    function mask_all_guess_one_init() {
+        const Masks = JSON.parse("{{Masks}}");
+        const container = document.querySelector(".image-container");
+        const img = container.querySelector("img");
+        const maskOverlay = document.querySelector(".mask-overlay");
+        maskOverlay.innerHTML = "";
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        const target_index = "{{Index}}";
+        for (const [index, group] of Masks.entries()) {
+            let cloze_id = `c${index + 1}`;
+            if (index === idx) {
+                for (let i = 0; i < group.length; i++) {
+                    let mask = group[i];
+                    const maskArea = document.createElement("a");
+                    maskArea.style.position = "absolute";
+                    maskArea.style.left = mask[0] * imgWidth + "px";
+                    maskArea.style.top = mask[1] * imgHeight + "px";
+                    maskArea.style.width = mask[2] * imgWidth + "px";
+                    maskArea.style.height = mask[3] * imgHeight + "px";
+                    maskArea.style.pointerEvents = "auto";
+                    maskArea.style.opacity = 0.1;
+                    maskArea.setAttribute("cloze_id", cloze_id);
+                    maskArea.className = "overlay";
+                    maskArea.onclick = function () {
+                        [].forEach.call(
+                            maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                            (ele) => {
+                                ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                            }
+                        );
+                    };
+                    maskOverlay.appendChild(maskArea);
+                }
+            } else {
+                for (let i = 0; i < group.length; i++) {
+                    let mask = group[i];
+                    const maskArea = document.createElement("a");
+                    maskArea.style.position = "absolute";
+                    maskArea.style.left = mask[0] * imgWidth + "px";
+                    maskArea.style.top = mask[1] * imgHeight + "px";
+                    maskArea.style.width = mask[2] * imgWidth + "px";
+                    maskArea.style.height = mask[3] * imgHeight + "px";
+                    maskArea.style.pointerEvents = "auto";
+                    maskArea.style.opacity = 1;
+                    maskArea.className = "overlay-second";
+                    maskArea.setAttribute("cloze_id", cloze_id);
+                    maskArea.onclick = function () {
+                        [].forEach.call(
+                            maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                            (ele) => {
+                                ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                            }
+                        );
+                    };
+                    maskOverlay.appendChild(maskArea);
+                }
+            }
+        }
+    }
+
+    function mask_all_guess_all_init() { }
+
+    function mask_one_guess_one_init() { }
+
+    function switch_card() {
+        let cloze_id = cloze_ids[idx];
+        const maskOverlay = document.querySelector(".mask-overlay");
+        if (mode === "mask_one_guess_one") {
+            [].forEach.call(maskOverlay.querySelectorAll("a"), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        if (flags[idx]) {
+                            ele.style.opacity = 0.1;
+                        } else {
+                            ele.style.opacity = 1;
+                        }
+                    } else {
+                        ele.style.opacity = 0.1;
+                    }
+                }
+            });
+        } else if (mode === "mask_all_guess_one") {
+            [].forEach.call(maskOverlay.querySelectorAll("a"), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        ele.className = "overlay";
+                        if (flags[idx]) {
+                            ele.style.opacity = 0.1;
+                        } else {
+                            ele.style.opacity = 1;
+                        }
+                    } else {
+                        ele.style.opacity = 1;
+                        ele.className = "overlay-second";
+                    }
+                }
+            });
+        }
+    }
+
+    function init() {
+        switch (mode) {
+            case "free_guess": {
+                free_guess_init();
+                break;
+            }
+            case "mask_one_guess_one": {
+                mask_one_guess_one_init();
+                break;
+            }
+            case "mask_all_guess_one": {
+                mask_all_guess_one_init();
+                break;
+            }
+            case "mask_all_guess_all": {
+                mask_all_guess_all_init();
+                break;
+            }
+            case "mask_half_guess_one": {
+                mask_all_guess_one_init();
+                break;
+            }
+            case "mask_one_guess_one_multi": {
+                mask_one_guess_one_multi_init();
+                break;
+            }
+            case "mask_all_guess_one_multi": {
+                mask_all_guess_one_multi_init();
+                break;
+            }
+        }
+    }
+    function handleResize() {
+        init();
+        switch_card();
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+</script>
+
+<script type="text/javascript">
+    var word = `{{word}}`;
+    // 标签
+    var tags = JSON.parse(`{{tags}}` ? `{{tags}}` : `[]`);
+    var tag_div = document.getElementById("tags");
+    for (var i = 0; i < tags.length; i++) {
+        var tag = document.createElement("span");
+        tag.innerHTML = tags[i];
+        tag_div.appendChild(tag);
+    }
+    // 音标
+
+
+    // 变形
+    var variants_div = document.getElementById("variants");
+    var variants = JSON.parse(`{{variants}}` ? `{{variants}}` : `[]`);
+    if (variants.length > 0) {
+        for (var i = 0; i < variants.length; i++) {
+            var span = document.createElement("span");
+            span.innerHTML = `${variants[i][0]}: <b>${variants[i][1]}</b>&nbsp;`
+            variants_div.appendChild(span);
+        }
+    }
+
+    // 图片
+    var imgs = JSON.parse(`{{word_image}}` ? `{{word_image}}` : `[]`);
+    if (imgs.length > 0) {
+        var img_div = document.getElementById("img");
+        var img_table = document.createElement("table");
+        var tr = document.createElement("tr");
+        for (var i = 0; i < imgs.length; i++) {
+            var td = document.createElement("td");
+            td.innerHTML = `<img src="${imgs[i]}" >`;
+            tr.appendChild(td);
+        }
+        img_table.appendChild(tr);
+        img_div.appendChild(img_table);
+    }
+
+    // 释义
+    var definition = JSON.parse(`{{definition}}` ? `{{definition}}` : `[]`);
+    if (definition.length > 0) {
+        var definition_div = document.getElementById("definition");
+        for (var i = 0; i < definition.length; i++) {
+            var p = document.createElement("p");
+            var pos = document.createElement("span");
+            pos.innerHTML = definition[i][0];
+            pos.className = "pos";
+            p.appendChild(pos);
+            var exp = document.createElement("strong");
+            exp.innerHTML = definition[i][1];
+            p.appendChild(exp);
+            definition_div.appendChild(p);
+        }
+    }
+
+    // 例句
+    var sentence = JSON.parse(`{{sentences}}` ? `{{sentences}}` : `[]`);
+    if (sentence.length > 0) {
+        var sentence_div = document.getElementById("sentence");
+        var sentence_title = document.createElement("div");
+        sentence_title.className = "sub-title";
+        sentence_title.innerHTML = "例句";
+        sentence_div.appendChild(sentence_title);
+        for (var i = 0; i < sentence.length; i++) {
+            var p = document.createElement("p");
+            var eng = document.createElement("div");
+            eng.innerHTML = sentence[i][0];
+            eng.className = "sent-source";
+            p.appendChild(eng);
+            var chn = document.createElement("div");
+            chn.innerHTML = sentence[i][1];
+            chn.className = "sent-target";
+            p.appendChild(chn);
+            sentence_div.appendChild(p);
+        }
+    }
+
+    // 短语
+    var phrases = JSON.parse(`{{phrases}}` ? `{{phrases}}` : `[]`);
+    if (phrases.length > 0) {
+        var phrases_div = document.getElementById("phrases");
+        var phrases_title = document.createElement("div");
+        phrases_title.className = "sub-title";
+        phrases_title.innerHTML = "短语";
+        phrases_div.appendChild(phrases_title);
+        for (var i = 0; i < phrases.length; i++) {
+            var p = document.createElement("p");
+            var eng = document.createElement("div");
+            eng.innerHTML = phrases[i][0];
+            eng.className = "sent-source";
+            p.appendChild(eng);
+            var chn = document.createElement("div");
+            chn.innerHTML = phrases[i][1];
+            chn.className = "sent-target";
+            p.appendChild(chn);
+            phrases_div.appendChild(p);
+        }
+    }
+
+    // 词缀
+    var affix = JSON.parse(`{{affix}}` ? `{{affix}}` : `[]`);
+    if (affix.length > 0) {
+        var affix_div = document.getElementById("affix");
+        var affix_title = document.createElement("div");
+        affix_title.className = "sub-title";
+        affix_title.innerHTML = "词根词缀";
+        affix_div.appendChild(affix_title);
+        for (var i = 0; i < affix.length; i++) {
+            var p = document.createElement("p");
+            var eng = document.createElement("div");
+            eng.innerHTML = affix[i][0];
+            eng.className = "sent-source";
+            p.appendChild(eng);
+            var chn = document.createElement("div");
+            chn.innerHTML = affix[i][1];
+            chn.className = "sent-target";
+            p.appendChild(chn);
+            affix_div.appendChild(p);
+        }
+    }
+
+    // 释义常用度分布图
+    var defChart = echarts.init(document.getElementById('meaning_dist'));
+    var meaning_distribution_data = JSON.parse(`{{meaning_distribution}}` ? `{{meaning_distribution}}` : `[]`);
+    if (meaning_distribution_data.length > 1) {
+        option = {
+            title: {
+                text: '释义常用度分布图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            // legend: {
+            //     orient: 'vertical',
+            //     left: 'left'
+            // },
+            series: [
+                {
+                    name: '占比(%)',
+                    type: 'pie',
+                    radius: '50%',
+                    data: meaning_distribution_data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        defChart.setOption(option);
+    }
+
+    // 词性分布图
+    var posChart = echarts.init(document.getElementById('pos_dist'));
+    var pos_distribution_data = JSON.parse(`{{pos_distribution}}` ? `{{pos_distribution}}` : `[]`);
+    if (pos_distribution_data.length > 1) {
+        option = {
+            title: {
+                text: '词性常用度分布图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            // legend: {
+            //     orient: 'vertical',
+            //     left: 'left'
+            // },
+            series: [
+                {
+                    name: '占比(%)',
+                    type: 'pie',
+                    radius: '50%',
+                    data: JSON.parse(`{{pos_distribution}}` ? `{{pos_distribution}}` : `[]`),
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        posChart.setOption(option);
+    }
+
+    if (meaning_distribution_data.length <= 1 && pos_distribution_data.length <= 1) {
+        var dist_container = document.getElementById("dist_container");
+        dist_container.style.display = "none";
+    }
+
+    // 友情链接
+    var links_div = document.getElementById("links");
+    links_div.innerHTML = `<div class="sub-title">
+        查词
+    </div>
+    <div style="display: flex;margin-top:0.5em;">
+        <span class="dict-link" style="margin-left:0px">
+            <a href="eudic://dict/${word}" target="_blank">
+                <img src="https://dict.eudic.net/Images/en/favicon.ico" alt="" style="width:16px">
+                欧路词典(客户端)
+                </a>
+        </span>
+        <span class="dict-link">
+            <a href="https://dict.eudic.net/dicts/en/${word}" target="_blank">
+                <img src="https://dict.eudic.net/Images/en/favicon.ico" alt="" style="width:16px">
+                欧路词典(网页)
+                </a>
+        </span>
+        <span class="dict-link">
+            <a href="https://www.youdao.com/result?word=${word}&lang=en" target="_blank">
+                <img src="https://shared-https.ydstatic.com/images/favicon.ico" alt="" style="width:16px">
+                有道词典
+            </a>
+        </span>
+        <span class="dict-link">
+            <a href="https://dict.cn/search?q=${word}" target="_blank">
+                <img src="https://i1.haidii.com/favicon.ico" alt="" style="width:16px">
+                海词词典</a>
+        </span>
+        <span class="dict-link">
+            <a href="https://www.bing.com/dict/search?q=${word}&FORM=HDRSC6" target="_blank">
+                <img src="https://cn.bing.com/sa/simg/favicon-trans-bg-blue-mg.ico" alt="" style="width:16px">
+                必应词典</a>
+        </span>
+        <span class="dict-link">
+            <a href="https://fanyi.sogou.com/text?keyword=${word}&transfrom=en&transto=zh-CHS&model=general" target="_blank">
+                <img src="https://dlweb.sogoucdn.com/translate/favicon.ico?v=20180424" alt="" style="width:16px">
+                搜狗翻译</a>
+        </span>
+    </div>`
+</script>
+

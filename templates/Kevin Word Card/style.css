@@ -1,0 +1,135 @@
+
+.card {
+    font-family: arial;
+    font-size: 20px;
+    text-align: auto;
+    color: black;
+    background-color: white;
+}
+
+.image-container {
+    position: relative;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    max-width: none;
+    max-height: none;
+}
+
+.mask-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: red;
+    opacity: 1;
+    pointer-events: none;
+}
+
+.overlay {
+    position: absolute;
+    background: #ff5656;
+    opacity: 1;
+}
+
+.overlay-second {
+    position: absolute;
+    background: #ffeba2;
+    opacity: 1;
+}
+
+
+.word {
+    color: #eb715b;
+}
+
+#tags span {
+    font-size: 12px;
+    line-height: 1;
+    display: inline-block;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 3px 8px;
+    margin-right: 4px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pos {
+    min-width: 2em;
+    display: inline-block;
+    padding-right: .5em;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #eb715b;
+}
+
+#phonetic td {
+    padding: 0.5em 0;
+    font-size: 16px;
+}
+
+#variants,
+#phonetic {
+    padding: 0.25em 0;
+    font-size: 16px;
+}
+
+.line-link {
+    font-size: 14px;
+    font-weight: 700;
+    /* color: #333; */
+    /* -webkit-text-decoration-color: #999!important; */
+    /* text-decoration-color: #999!important; */
+    /* text-decoration: underline; */
+}
+
+.pronounce {
+    font-size: 16px;
+    border-radius: 26px;
+    /* background-color: #f7f7f7; */
+    padding: 2px 10px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-right: 12px;
+    margin-bottom: 12px;
+}
+
+.dict-link {
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-left: 1em;
+}
+
+#sentence em,
+#sentence b {
+    font-style: normal;
+    color: #fd6853;
+}
+
+.sent-source {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.sent-target {
+    font-size: 18px;
+    line-height: 20px;
+    color: #888;
+    margin-top: 0.5em;
+}
+
+.sub-title {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #91c3fa;
+    margin-top: 0.5em;
+    text-decoration: underline;
+}

@@ -1,0 +1,107 @@
+@import url("__closet-0.5.3.css");
+
+
+:root {
+        --solarized-base3: #000000;
+        --solarized-base2: #ffffff;
+        --solarized-base1: #93a1a1;
+        --radius: 0.6rem;
+}
+
+.card {
+        text-align: left;
+        background-color: white;
+}
+
+.ellipsis::before {
+        content: '[...]';
+}
+
+.content {
+        --text-color: var(--solarized-base3);
+        --border-color: var(--solarized-base1);
+        font-size: 165%;
+        display: grid;
+        color: var(--text-color);
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+                "top top"
+                "bottom bottom"
+                "button button";
+        grid-gap: .25rem;
+}
+#content_show {
+        display: none;
+}
+.mobile .content {
+        font-size: 100%;
+}
+.bottom > .help {
+        padding-top: 0.75rem;
+        border-top: solid var(--field-border) var(--border-color);
+        margin-top: 0.75rem;
+}
+.top {
+        grid-area: top;
+        background-color: var(--solarized-base2);
+        border-radius: var(--radius) var(--radius) 0 0;
+        border-style: solid;
+        border-color: var(--border-color);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+}
+.top > div + div {
+        border-style: solid;
+        border-color:  var(--border-color);
+        border-width: var(--field-border) var(--field-border) 0;
+        margin: -3px -3px 0;
+}
+.bottom {
+        background-color: var(--solarized-base2);
+        grid-area: bottom;
+        border-radius: 0 0 var(--radius) var(--radius);
+        border-style: solid;
+        border-color: var(--border-color);
+}
+.container {
+        padding: 0.5rem;
+}
+.extras {
+        display: none;
+}
+#tags {
+        position: -webkit-sticky;
+        position: sticky;
+        float: right;
+        font-size: 73%
+}
+.cl--obscure-hint {
+  filter: blur(0.25em);
+        font-size: 100%;
+}
+.cl--obscure-fix::after {
+  content: 'XXXXXXX';
+  filter: blur(0.25em);
+        font-size: 100%;
+}
+.cl--obscure-fix > span {
+  display: none;
+}
+
+/* Clickable Tags (add-on) */
+kbd {
+ border-style: none !important;
+ background-color: transparent !important;
+ font-family: Ebrima !important;
+ font-size: 11px !important;
+ padding: 0.0rem 0.0rem !important;
+ margin: 0px 1px !important;
+ float: right !important;
+}
+/* Tag Becomes More Visible On Hover */
+kbd:hover { transition: color .3s ease; color: red }
+/* Tag Mobile Adjustments */
+.mobile kbd { opacity: .7; margin: 0px 1px !important; display: inline-block; font-size: 9px !important; font-family: Ebrima !important; }
+.mobile #tags-container {line-height:0.6rem; margin-left: 0px; }

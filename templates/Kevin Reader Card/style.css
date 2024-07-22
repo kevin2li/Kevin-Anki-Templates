@@ -1,0 +1,77 @@
+
+:root {
+    --yellow: #ffeba2;
+    --blue: #ff5656;
+}
+
+.card {
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    padding: 8px;
+    text-align: left;
+    color: #333;
+    background-color: white;
+    border-radius: 4px;
+}
+
+.original-text {
+    background-color: #e8f5e9;
+    /* color: #007bff; */
+    padding: 8px 4px;
+    font-family: Microsoft YaHei;
+    font-size:x-large;
+    margin-bottom: 10px;
+}
+
+.source {
+    /* line-height: 1.6; */
+    margin-bottom: 4px;
+    font-size: small;
+    font-family: Microsoft YaHei;
+    color: #929292;
+}
+
+.remark{
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    color: #929292;
+    font-size: small;
+    margin-bottom: 4px;
+    /* font-style: italic; */
+}
+
+.notes1{
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 4px;
+}
+
+
+.cloze-hide {
+    font-weight: bold;
+    color: var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
+    /* filter: blur(0.25em); */
+}
+
+.cloze-show {
+    font-weight: bold;
+    color: var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
+}
+
+.cloze-hide2 {
+    font-weight: bold;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    cursor: pointer;
+    /* filter: blur(0.25em); */
+}
+
+.cloze-show2 {
+    font-weight: bold;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    cursor: pointer;
+}

@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Text Cloze",
+    "Fields": ["ID", "Front", "Back", "Mode", "Index"]
+}

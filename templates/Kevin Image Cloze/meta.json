@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Image Cloze",
+    "Fields": ["ID", "Header", "Image", "Masks", "Source", "Notes", "Mode", "Index"]
+}

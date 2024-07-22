@@ -1,0 +1,78 @@
+
+:root{
+    --yellow: #f67c01;
+    --blue: #2097f3;
+}
+
+.card {
+    font-family: arial;
+    font-size: 20px;
+    text-align: left;
+    color: black;
+    background-color: white;
+}
+
+.cloze-hide {
+    font-weight: bold;
+    color: var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
+    /* filter: blur(0.25em); */
+}
+
+.cloze-show {
+    font-weight: bold;
+    color:var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
+}
+
+.cloze-hide2 {
+    font-weight: bold;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    cursor: pointer;
+    /* filter: blur(0.25em); */
+}
+
+.cloze-show2 {
+    font-weight: bold;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    cursor: pointer;
+}
+table {
+    border-collapse: collapse;
+}
+
+table,th,td {
+    border: 1px solid #ccc;
+}
+
+mark.red{
+    background-color: red;
+}
+
+mark.yellow{
+    background-color: yellow;
+}
+
+mark.green{
+    background-color: green;
+}
+
+mark.blue{
+    background-color: blue;
+}
+
+mark.cyan{
+    background-color: cyan;
+}
+
+mark.magenta{
+    background-color: magenta;
+}
+
+.font_red{
+    color: red;
+}

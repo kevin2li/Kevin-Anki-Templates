@@ -1,0 +1,543 @@
+<!-- Author: Kevin2li -->
+<!-- Github: https://github.com/kevin2li -->
+
+<script>
+    // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+    if (void 0 === window.Persistence) { var e = "github.com/SimonLammer/anki-persistence/", t = "_default"; if (window.Persistence_sessionStorage = function () { var i = !1; try { "object" == typeof window.sessionStorage && (i = !0, this.clear = function () { for (var t = 0; t < sessionStorage.length; t++) { var i = sessionStorage.key(t); 0 == i.indexOf(e) && (sessionStorage.removeItem(i), t--) } }, this.setItem = function (i, n) { void 0 == n && (n = i, i = t), sessionStorage.setItem(e + i, JSON.stringify(n)) }, this.getItem = function (i) { return void 0 == i && (i = t), JSON.parse(sessionStorage.getItem(e + i)) }, this.removeItem = function (i) { void 0 == i && (i = t), sessionStorage.removeItem(e + i) }, this.getAllKeys = function () { for (var t = [], i = Object.keys(sessionStorage), n = 0; n < i.length; n++) { var s = i[n]; 0 == s.indexOf(e) && t.push(s.substring(e.length, s.length)) } return t.sort() }) } catch (n) { } this.isAvailable = function () { return i } }, window.Persistence_windowKey = function (i) { var n = window[i], s = !1; "object" == typeof n && (s = !0, this.clear = function () { n[e] = {} }, this.setItem = function (i, s) { void 0 == s && (s = i, i = t), n[e][i] = s }, this.getItem = function (i) { return void 0 == i && (i = t), void 0 == n[e][i] ? null : n[e][i] }, this.removeItem = function (i) { void 0 == i && (i = t), delete n[e][i] }, this.getAllKeys = function () { return Object.keys(n[e]) }, void 0 == n[e] && this.clear()), this.isAvailable = function () { return s } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var i = window.location.toString().indexOf("title"), n = window.location.toString().indexOf("main", i); i > 0 && n > 0 && n - i < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
+</script>
+<div id='q_div'></div>
+<!-- <button>显示/隐藏全部</button> -->
+<div id="nav" style="display: none;text-align:center">
+    <button id="prev" onclick="go_prev()">
+        < </button>
+            <span id="progress"></span>
+            <button id="next" onclick="go_next()">></button>
+</div>
+<div id="debug"></div>
+<script type="text/javascript">
+    var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
+    var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    var idx = 0;
+    var cloze_ids = new Array();
+    if (Persistence.isAvailable()) {
+        Persistence.setItem("idx", idx);
+        Persistence.setItem("cloze_ids", cloze_ids);
+    }
+    var mode = "{{Mode}}";
+    var final_html_content = "";
+    function free_guess_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        var q_div = document.getElementById("q_div");
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let cloze_id = `c${index}`;
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            span.innerHTML = mask;
+            span.className = "cloze-hide";
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+    }
+    function mask_one_guess_one_multi_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        const target_index = "{{Index}}";
+        var q_div = document.getElementById("q_div");
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let cloze_id = `c${index}`;
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            if (cloze_id === target_index) {
+                span.className = "cloze-hide";
+                span.innerHTML = mask;
+            } else {
+                span.innerHTML = span.getAttribute("cloze_text");
+                // .className = "cloze-show";
+            }
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+    }
+    function mask_all_guess_one_multi_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        const target_index = "{{Index}}";
+        var q_div = document.getElementById("q_div");
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let cloze_id = `c${index}`;
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            if (cloze_id === target_index) {
+                span.className = "cloze-hide";
+                span.innerHTML = mask;
+            } else {
+                span.className = "cloze-hide2";
+                span.innerHTML = mask;
+            }
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+        document.querySelectorAll(".cloze-hide2, .cloze_show2").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide2') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show2";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide2";
+                    }
+                })
+            }
+        });
+    }
+    function mask_all_guess_all_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        const target_index = "{{Index}}";
+        var q_div = document.getElementById("q_div");
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", "c1");
+            span.setAttribute("cloze_text", content);
+            span.className = "cloze-hide";
+            span.innerHTML = mask;
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+    }
+    function mask_one_guess_one_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        var q_div = document.getElementById("q_div");
+        let match_count = 0;
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let span = document.createElement("span");
+            let cloze_id = `c${index}`;
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            if (!cloze_ids.includes(cloze_id)) {
+                cloze_ids.push(cloze_id)
+            }
+            match_count++;
+            if (match_count === 1) {
+                span.className = "cloze-hide";
+                span.innerHTML = mask;
+            } else {
+                span.innerHTML = span.getAttribute("cloze_text");
+                // span.className = "cloze-show";
+            }
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+        // 显示导航
+        let nav = document.getElementById("nav");
+        nav.style.display = "block";
+        let progress = document.getElementById("progress");
+        progress.innerHTML = `1/${cloze_ids.length}`;
+    }
+    function mask_all_guess_one_init() {
+        let matches;
+        let last_pos = 0;
+        final_html_content = "";
+        const text = `{{Front}}`;
+        const target_index = "{{Index}}";
+        var q_div = document.getElementById("q_div");
+        let match_count = 0;
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                final_html_content += `${text.slice(pos, start)}`
+            }
+            let cloze_id = `c${index}`;
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            if (!cloze_ids.includes(cloze_id)) {
+                cloze_ids.push(cloze_id);
+            }
+            match_count++;
+            if (match_count === 1) {
+                span.className = "cloze-hide";
+                span.innerHTML = mask;
+            } else {
+                span.className = "cloze-hide2";
+                span.innerHTML = mask;
+            }
+            final_html_content += span.outerHTML;
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            final_html_content += `${text.slice(pos, text.length)}`
+        }
+        q_div.innerHTML = final_html_content;
+        document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+        });
+        document.querySelectorAll(".cloze-hide2, .cloze_show2").forEach(ele => {
+            let cloze_id = ele.getAttribute("cloze_id");
+            ele.onclick = ()=>{
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide2') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show2";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide2";
+                    }
+                })
+            }
+        });
+        // 显示导航
+        let nav = document.getElementById("nav");
+        nav.style.display = "block";
+        let progress = document.getElementById("progress");
+        progress.innerHTML = `1/${cloze_ids.length}`;
+    }
+    function switch_card() {
+        let cloze_id = cloze_ids[idx];
+        let q_div = document.getElementById("q_div");
+        if (mode === "mask_one_guess_one") {
+            [].forEach.call(q_div.querySelectorAll(`span`), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide";
+                                }
+                            })
+                        }
+                    } else {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "";
+                    }
+                }
+            })
+        } else if (mode === "mask_all_guess_one") {
+            [].forEach.call(q_div.querySelectorAll(`span`), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide";
+                                }
+                            })
+                        }
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide2";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide2') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show2";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide2";
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+        } else if (mode === "mask_half_guess_one") {
+            [].forEach.call(q_div.querySelectorAll(`span`), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    let opend_clozes = cloze_ids.slice(0, idx);
+                    if (opend_clozes.includes(cur_cloze_id)) {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide";
+                                }
+                            })
+                        }
+                    } else if (cur_cloze_id === cloze_ids[idx]) {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide";
+                                }
+                            })
+                        }
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide2";
+                        ele.onclick = () => {
+                            [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
+                                if (ele.className === 'cloze-hide2') {
+                                    ele.innerHTML = ele.getAttribute("cloze_text");
+                                    ele.className = "cloze-show2";
+                                } else {
+                                    ele.innerHTML = mask;
+                                    ele.className = "cloze-hide2";
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+        }
+    }
+    function go_next() {
+        const n = cloze_ids.length;
+        idx = (idx + 1) % n;
+        let progress = document.getElementById("progress");
+        progress.innerHTML = `${idx + 1}/${n}`;
+        switch_card();
+        if (Persistence.isAvailable()) {
+            Persistence.setItem("idx", idx);
+        }
+    }
+    function go_prev() {
+        const n = cloze_ids.length;
+        idx = Math.max(0, (idx - 1) % n);
+        let progress = document.getElementById("progress");
+        progress.innerHTML = `${idx + 1}/${n}`;
+        switch_card();
+        if (Persistence.isAvailable()) {
+            Persistence.setItem("idx", idx);
+        }
+    }
+    document.addEventListener("keyup", (event) => {
+        if (event.keyCode === 75 /* 'KeyK' */) {
+            go_next();
+        } else if (event.keyCode === 74 /* 'KeyJ' */) {
+            go_prev();
+        }
+    });
+    switch (mode) {
+        case "free_guess": {
+            free_guess_init();
+            break;
+        }
+        case "mask_one_guess_one": {
+            mask_one_guess_one_init();
+            break;
+        }
+        case "mask_all_guess_one": {
+            mask_all_guess_one_init();
+            break;
+        }
+        case "mask_all_guess_all": {
+            mask_all_guess_all_init();
+            break;
+        }
+        case "mask_half_guess_one": {
+            mask_all_guess_one_init();
+            break;
+        }
+        case "mask_one_guess_one_multi": {
+            mask_one_guess_one_multi_init();
+            break;
+        }
+        case "mask_all_guess_one_multi": {
+            mask_all_guess_one_multi_init();
+            break;
+        }
+    }
+    if (Persistence.isAvailable()) {
+        Persistence.setItem("cloze_ids", cloze_ids);
+    }
+    // let debugDiv = document.getElementById("debug");
+    // let out = "";
+    // for (let i = 0; i < results.length; i++) {
+    //     out += `${i}: ${results[i]}<br>`
+    // }
+    // debugDiv.innerHTML = `${out}`;
+</script>

@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Image QA Card",
+    "Fields": ["ID", "Header", "Front", "Back", "Masks", "Notes"]
+}

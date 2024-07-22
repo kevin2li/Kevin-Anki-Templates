@@ -1,0 +1,172 @@
+@charset "UTF-8";
+.android .card:not(.mathjax-rendered) {
+  visibility: hidden;
+}
+
+.closet-delay {
+  visibility: hidden;
+}
+
+.closet-log {
+  color: black;
+  background-color: #ff9328;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.closet-shuffle__separator::before {
+  content: ", ";
+}
+
+.closet-cloze::before {
+  content: "[";
+}
+.closet-cloze::after {
+  content: "]";
+}
+.closet-cloze.is-active {
+  color: #1560bd;
+}
+.closet-cloze.is-back::before, .closet-cloze.is-inactive::before {
+  content: normal;
+}
+.closet-cloze.is-back::after, .closet-cloze.is-inactive::after {
+  content: normal;
+}
+
+.closet-cloze__hint:empty::before {
+  content: "...";
+}
+
+.closet-cloze__ellipsis::before {
+  content: "...";
+}
+
+.closet-multiple-choice::before {
+  content: "( ";
+}
+.closet-multiple-choice::after {
+  content: " )";
+}
+.closet-multiple-choice.is-inactive::before {
+  content: normal;
+}
+.closet-multiple-choice.is-inactive::after {
+  content: normal;
+}
+
+.closet-multiple-choice__separator::before {
+  content: ", ";
+}
+
+.closet-multiple-choice__option {
+  color: orange;
+}
+
+.closet-multiple-choice__correct {
+  color: lime;
+}
+
+.closet-multiple-choice__wrong {
+  color: red;
+}
+
+.closet-multiple-choice__ellipsis::before {
+  content: "...";
+}
+
+.closet-mingle::before {
+  content: "«";
+}
+.closet-mingle::after {
+  content: "»";
+}
+.closet-mingle.is-active .closet-mingle__item {
+  color: mediumpurple;
+}
+.closet-mingle.is-inactive::before {
+  content: normal;
+}
+.closet-mingle.is-inactive::after {
+  content: normal;
+}
+
+.closet-mingle__separator::before {
+  content: ", ";
+}
+
+.closet-mingle__ellipsis::before {
+  content: "...";
+}
+
+.closet-jumble::before {
+  content: "«";
+}
+.closet-jumble::after {
+  content: "»";
+}
+.closet-jumble.is-active .closet-jumble__item {
+  color: mediumpurple;
+}
+.closet-jumble.is-inactive::before {
+  content: normal;
+}
+.closet-jumble.is-inactive::after {
+  content: normal;
+}
+
+.closet-jumble__separator::before {
+  content: ", ";
+}
+
+.closet-jumble__ellipsis::before {
+  content: "...";
+}
+
+.closet-sort::before {
+  content: "«";
+}
+.closet-sort::after {
+  content: "»";
+}
+.closet-sort.is-active .closet-sort__item {
+  color: mediumpurple;
+}
+.closet-sort.is-inactive::before {
+  content: normal;
+}
+.closet-sort.is-inactive::after {
+  content: normal;
+}
+
+.closet-sort__separator::before {
+  content: ", ";
+}
+
+.closet-sort__ellipsis::before {
+  content: "...";
+}
+
+.closet-rect__rect {
+  fill: moccasin;
+  stroke: olive;
+}
+.is-active .closet-rect__rect {
+  fill: salmon;
+  stroke: yellow;
+}
+.is-back.is-active .closet-rect__rect {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.closet-rect__ellipsis {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.closet-rect__label {
+  stroke: black;
+  stroke-width: 0.5;
+}

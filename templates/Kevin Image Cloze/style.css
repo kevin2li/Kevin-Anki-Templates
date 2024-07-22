@@ -1,0 +1,54 @@
+.card {
+    font-family: arial;
+    font-size: 20px;
+    text-align: left;
+    color: black;
+    background-color: white;
+}
+
+.header {
+    font-size: x-large;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.image-container {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    position: relative;
+}
+
+.mask-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: red;
+    opacity: 1;
+    pointer-events: none;
+}
+
+.overlay {
+    position: absolute;
+    background: #ff5656;
+    opacity: 1;
+}
+
+.overlay-second {
+    position: absolute;
+    background: #ffeba2;
+    opacity: 1;
+}
+
+.scratch-area {
+    position: absolute;
+    cursor: pointer;
+}

@@ -1,0 +1,296 @@
+<script>
+    // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+    if (void 0 === window.Persistence) { var e = "github.com/SimonLammer/anki-persistence/", t = "_default"; if (window.Persistence_sessionStorage = function () { var i = !1; try { "object" == typeof window.sessionStorage && (i = !0, this.clear = function () { for (var t = 0; t < sessionStorage.length; t++) { var i = sessionStorage.key(t); 0 == i.indexOf(e) && (sessionStorage.removeItem(i), t--) } }, this.setItem = function (i, n) { void 0 == n && (n = i, i = t), sessionStorage.setItem(e + i, JSON.stringify(n)) }, this.getItem = function (i) { return void 0 == i && (i = t), JSON.parse(sessionStorage.getItem(e + i)) }, this.removeItem = function (i) { void 0 == i && (i = t), sessionStorage.removeItem(e + i) }, this.getAllKeys = function () { for (var t = [], i = Object.keys(sessionStorage), n = 0; n < i.length; n++) { var s = i[n]; 0 == s.indexOf(e) && t.push(s.substring(e.length, s.length)) } return t.sort() }) } catch (n) { } this.isAvailable = function () { return i } }, window.Persistence_windowKey = function (i) { var n = window[i], s = !1; "object" == typeof n && (s = !0, this.clear = function () { n[e] = {} }, this.setItem = function (i, s) { void 0 == s && (s = i, i = t), n[e][i] = s }, this.getItem = function (i) { return void 0 == i && (i = t), void 0 == n[e][i] ? null : n[e][i] }, this.removeItem = function (i) { void 0 == i && (i = t), delete n[e][i] }, this.getAllKeys = function () { return Object.keys(n[e]) }, void 0 == n[e] && this.clear()), this.isAvailable = function () { return s } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var i = window.location.toString().indexOf("title"), n = window.location.toString().indexOf("main", i); i > 0 && n > 0 && n - i < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
+</script>
+<div class="detail-body">
+  <div class="question">
+    <div class="q-header">
+      <span>
+        <svg
+          t="1712147420704"
+          class="icon"
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          p-id="4223"
+          width="1em"
+          height="1em"
+          style="vertical-align: -0.15em; margin-right: 5px"
+        >
+          <path
+            d="M256 896a42.666667 42.666667 0 0 1-20.906667-5.546667A42.666667 42.666667 0 0 1 213.333333 853.333333V227.413333A97.28 97.28 0 0 1 307.2 128h409.6A97.28 97.28 0 0 1 810.666667 227.413333V853.333333a42.666667 42.666667 0 0 1-21.333334 36.693334 42.666667 42.666667 0 0 1-42.666666 0l-241.92-136.96-227.413334 136.533333A42.666667 42.666667 0 0 1 256 896z"
+            p-id="4224"
+            fill="#707070"
+          ></path>
+        </svg>
+        <b id="q_type"></b>
+      </span>
+      <button class="submit-btn" onclick="openPopup()" style="float: right">
+        卡片设置
+      </button>
+    </div>
+    <hr />
+    <div class="q-body">{{Question}}</div>
+    <div class="q-answers" id="q-options"></div>
+    <!-- <div class="q-tag"></div> -->
+    <br />
+  </div>
+</div>
+
+<div id="settingsModal" class="settings-container" style="display: none">
+  <div class="modal-content">
+    <span class="close-popup" onclick="closePopup()">&times;</span>
+    <div class="settings-block">
+      <div class="single-setting">
+        <div class="setting-label">显示类型</div>
+        <div class="setting-switch">
+          <input
+            id="show-type"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">随机选项</div>
+        <div class="setting-switch">
+          <input
+            id="random-option"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">自动翻转</div>
+        <div class="setting-switch">
+          <input
+            id="auto-flip"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">做题统计</div>
+        <div class="setting-switch">
+          <input
+            id="statistics"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+    </div>
+    <div class="single-setting">
+      <div class="setting-label">播放音效</div>
+      <div class="setting-switch">
+        <input
+          id="play-sound"
+          class="mui-switch mui-switch-anim"
+          type="checkbox"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // 打开弹窗的函数
+  function openPopup() {
+    document.getElementById("settingsModal").style.display = "block";
+  }
+
+  // 关闭弹窗的函数
+  function closePopup() {
+    document.getElementById("settingsModal").style.display = "none";
+  }
+
+  function autoFlip() {
+    document.getElementById("qa").style.display = "none";
+    if (window.pycmd) {
+      pycmd("ans");
+    } else if (window.showAnswer) {
+      showAnswer();
+    }
+    document.getElementById("qa").style.display = "block";
+  }
+  //  功能配置
+  var show_type = document.getElementById("show-type");
+  var random_option = document.getElementById("random-option");
+  var auto_flip = document.getElementById("auto-flip");
+  var statistics = document.getElementById("statistics");
+  var play_sound = document.getElementById("play-sound");
+  SHOW_TYPE = true;
+  RANDOM_OPTION = false;
+  AUTO_FLIP = false;
+  STATISTICS = true;
+  PLAY_SOUND = true;
+  if (Persistence.isAvailable()) {
+    if (
+      Persistence.getItem("show_type") == undefined ||
+      Persistence.getItem("show_type") == null
+    ) {
+      Persistence.setItem("show_type", SHOW_TYPE);
+    }
+    if (
+      Persistence.getItem("random_option") == undefined ||
+      Persistence.getItem("random_option") == null
+    ) {
+      Persistence.setItem("random_option", RANDOM_OPTION);
+    }
+    if (
+      Persistence.getItem("auto_flip") == undefined ||
+      Persistence.getItem("auto_flip") == null
+    ) {
+      Persistence.setItem("auto_flip", AUTO_FLIP);
+    }
+    if (
+      Persistence.getItem("statistics") == undefined ||
+      Persistence.getItem("statistics") == null
+    ) {
+      Persistence.setItem("statistics", STATISTICS);
+    }
+    if(
+      Persistence.getItem("play_sound") == undefined ||
+      Persistence.getItem("play_sound") == null
+    ){
+      Persistence.setItem("play_sound", PLAY_SOUND);
+    }
+    show_type.checked = Persistence.getItem("show_type");
+    random_option.checked = Persistence.getItem("random_option");
+    auto_flip.checked = Persistence.getItem("auto_flip");
+    statistics.checked = Persistence.getItem("statistics");
+    play_sound.checked = Persistence.getItem("play_sound");
+  }
+
+  show_type.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("show_type", show_type.checked);
+      update_type();
+    }
+  };
+  random_option.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("random_option", random_option.checked);
+      updateOptions();
+    }
+  };
+  auto_flip.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("auto_flip", auto_flip.checked);
+    }
+  };
+  statistics.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("statistics", statistics.checked);
+    }
+  };
+  play_sound.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("play_sound", play_sound.checked);
+    }
+  }
+  function update_type() {
+    var q_type = document.getElementById("q_type");
+    var answers = `{{Answers}}`.split("||");
+    if (Persistence.isAvailable()) {
+      var show_type = Persistence.getItem("show_type");
+      console.log({ show_type });
+      if (show_type) {
+        if (answers.length > 1) {
+          q_type.innerText = "多选题";
+        } else {
+          q_type.innerText = "单选题";
+        }
+      } else {
+        q_type.innerText = "选择题";
+      }
+    }
+  }
+  update_type();
+
+  function shuffleArray(array) {
+    var currentIndex = array.length,
+      temporaryValue,
+      randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
+  }
+
+  function updateOptions() {
+    var options = `{{Options}}`.split("||");
+    var answers = `{{Answers}}`.split("||");
+    var q_options_div = document.getElementById("q-options");
+    q_options_div.innerHTML = "";
+    var seqs = [...Array(options.length).keys()].map((x) => x);
+    console.log("before:", seqs);
+    if (Persistence.isAvailable()) {
+      var is_random = Persistence.getItem("random_option");
+      if (is_random) {
+        seqs = shuffleArray(seqs);
+      }
+      console.log("after:", seqs);
+    }
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("seqs", seqs);
+    }
+    for (const [i, val] of seqs.entries()) {
+      console.log(i, val);
+      var option_div = document.createElement("div");
+      option_div.className = "q-answer choosable normal";
+      option_div.setAttribute("seq", i + 1);
+      option_div.setAttribute("val", val + 1);
+      option_div.innerHTML = String.fromCharCode(65 + i) + ". " + options[val];
+      option_div.onclick = function () {
+        if (answers.length <= 1) {
+          // 清除其他选中
+          for (let j = 0; j < q_options_div.children.length; j++) {
+            let child = q_options_div.children[j];
+            if (child.classList.contains("chosen")) {
+              child.classList.remove("chosen");
+              child.classList.add("normal");
+            }
+          }
+        }
+        if (this.classList.contains("choosable")) {
+          this.classList.toggle("chosen");
+          if (this.classList.contains("chosen")) {
+            this.classList.remove("normal");
+          } else {
+            this.classList.add("normal");
+          }
+          let selectedOptions = [];
+          for (let j = 0; j < q_options_div.children.length; j++) {
+            if (q_options_div.children[j].classList.contains("chosen")) {
+              selectedOptions.push(
+                q_options_div.children[j].getAttribute("val")
+              );
+            }
+          }
+          if (Persistence.isAvailable()) {
+            Persistence.setItem("selectedOptions", selectedOptions);
+          }
+        }
+        if (answers.length > 1) {
+          return;
+        }
+        if (Persistence.isAvailable()) {
+          var is_auto_flip = Persistence.getItem("auto_flip");
+          if (is_auto_flip) {
+            autoFlip();
+          }
+        }
+      };
+      q_options_div.appendChild(option_div);
+    }
+  }
+  updateOptions();
+  if (Persistence.isAvailable()) {
+    Persistence.setItem("selectedOptions", []);
+  }
+</script>

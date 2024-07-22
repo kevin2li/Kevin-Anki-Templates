@@ -1,0 +1,253 @@
+
+<script>
+    // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+    if (void 0 === window.Persistence) { var e = "github.com/SimonLammer/anki-persistence/", t = "_default"; if (window.Persistence_sessionStorage = function () { var i = !1; try { "object" == typeof window.sessionStorage && (i = !0, this.clear = function () { for (var t = 0; t < sessionStorage.length; t++) { var i = sessionStorage.key(t); 0 == i.indexOf(e) && (sessionStorage.removeItem(i), t--) } }, this.setItem = function (i, n) { void 0 == n && (n = i, i = t), sessionStorage.setItem(e + i, JSON.stringify(n)) }, this.getItem = function (i) { return void 0 == i && (i = t), JSON.parse(sessionStorage.getItem(e + i)) }, this.removeItem = function (i) { void 0 == i && (i = t), sessionStorage.removeItem(e + i) }, this.getAllKeys = function () { for (var t = [], i = Object.keys(sessionStorage), n = 0; n < i.length; n++) { var s = i[n]; 0 == s.indexOf(e) && t.push(s.substring(e.length, s.length)) } return t.sort() }) } catch (n) { } this.isAvailable = function () { return i } }, window.Persistence_windowKey = function (i) { var n = window[i], s = !1; "object" == typeof n && (s = !0, this.clear = function () { n[e] = {} }, this.setItem = function (i, s) { void 0 == s && (s = i, i = t), n[e][i] = s }, this.getItem = function (i) { return void 0 == i && (i = t), void 0 == n[e][i] ? null : n[e][i] }, this.removeItem = function (i) { void 0 == i && (i = t), delete n[e][i] }, this.getAllKeys = function () { return Object.keys(n[e]) }, void 0 == n[e] && this.clear()), this.isAvailable = function () { return s } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var i = window.location.toString().indexOf("title"), n = window.location.toString().indexOf("main", i); i > 0 && n > 0 && n - i < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
+</script>
+<div class="card">
+    {{#Header}}
+    <div class="header">
+        {{Header}}
+    </div>
+    {{/Header}}
+    <div class="image-container">
+        {{Image}}
+        <div class="mask-overlay"></div>
+    </div>
+    {{#Source}}
+    <div>{{Source}}</div>
+    {{/Source}}
+</div>
+<hr id="answer" />
+{{Notes}}
+<script>
+    var idx = 0;
+    var cloze_ids = new Array();
+    var flags = new Array();
+    if (Persistence.isAvailable()) {
+        idx = Persistence.getItem("idx");
+        cloze_ids = Persistence.getItem("cloze_ids");
+        flags = Persistence.getItem("flags");
+    }
+    console.log({ idx });
+    var mode = "{{Mode}}";
+    function reload_img() {
+        const container = document.querySelector(".image-container");
+        const img = container.querySelector("img");
+        let current_src = img.src;
+        img.src = "";
+        img.src = current_src;
+    }
+    function free_guess_init() { }
+
+    function mask_one_guess_one_multi_init() { }
+
+    function mask_all_guess_one_multi_init() {
+        const Masks = JSON.parse("{{Masks}}");
+        const container = document.querySelector(".image-container");
+        const img = container.querySelector("img");
+        img.onload = function(){
+            const maskOverlay = document.querySelector(".mask-overlay");
+            maskOverlay.innerHTML = "";
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+            const target_index = "{{Index}}";
+            for (const [index, group] of Masks.entries()) {
+                let cloze_id = `c${index + 1}`;
+                cloze_ids.push(cloze_id);
+                if (cloze_id === target_index) {
+                    for (let i = 0; i < group.length; i++) {
+                        let mask = group[i];
+                        const maskArea = document.createElement("a");
+                        maskArea.style.position = "absolute";
+                        maskArea.style.left = mask[0] * imgWidth + "px";
+                        maskArea.style.top = mask[1] * imgHeight + "px";
+                        maskArea.style.width = mask[2] * imgWidth + "px";
+                        maskArea.style.height = mask[3] * imgHeight + "px";
+                        maskArea.style.pointerEvents = "auto";
+                        maskArea.style.opacity = 0.1;
+                        maskArea.setAttribute("cloze_id", cloze_id);
+                        maskArea.className = "overlay";
+                        maskArea.onclick = function () {
+                            [].forEach.call(
+                                maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                                (ele) => {
+                                    ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                                }
+                            );
+                        };
+                        maskOverlay.appendChild(maskArea);
+                    }
+                } else {
+                    for (let i = 0; i < group.length; i++) {
+                        let mask = group[i];
+                        const maskArea = document.createElement("a");
+                        maskArea.style.position = "absolute";
+                        maskArea.style.left = mask[0] * imgWidth + "px";
+                        maskArea.style.top = mask[1] * imgHeight + "px";
+                        maskArea.style.width = mask[2] * imgWidth + "px";
+                        maskArea.style.height = mask[3] * imgHeight + "px";
+                        maskArea.style.pointerEvents = "auto";
+                        maskArea.style.opacity = 1;
+                        maskArea.className = "overlay-second";
+                        maskArea.setAttribute("cloze_id", cloze_id);
+                        maskArea.onclick = function () {
+                            [].forEach.call(
+                                maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                                (ele) => {
+                                    ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                                }
+                            );
+                        };
+                        maskOverlay.appendChild(maskArea);
+                    }
+                }
+            }
+        }
+        reload_img();
+    }
+
+    function mask_all_guess_one_init() {
+        const Masks = JSON.parse("{{Masks}}");
+        const container = document.querySelector(".image-container");
+        const img = container.querySelector("img");
+        img.onload = function(){
+            const maskOverlay = document.querySelector(".mask-overlay");
+            maskOverlay.innerHTML = "";
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+            const target_index = "{{Index}}";
+            for (const [index, group] of Masks.entries()) {
+                let cloze_id = `c${index + 1}`;
+                if (index === idx) {
+                    for (let i = 0; i < group.length; i++) {
+                        let mask = group[i];
+                        const maskArea = document.createElement("a");
+                        maskArea.style.position = "absolute";
+                        maskArea.style.left = mask[0] * imgWidth + "px";
+                        maskArea.style.top = mask[1] * imgHeight + "px";
+                        maskArea.style.width = mask[2] * imgWidth + "px";
+                        maskArea.style.height = mask[3] * imgHeight + "px";
+                        maskArea.style.pointerEvents = "auto";
+                        maskArea.style.opacity = 0.1;
+                        maskArea.setAttribute("cloze_id", cloze_id);
+                        maskArea.className = "overlay";
+                        maskArea.onclick = function () {
+                            [].forEach.call(
+                                maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                                (ele) => {
+                                    ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                                }
+                            );
+                        };
+                        maskOverlay.appendChild(maskArea);
+                    }
+                } else {
+                    for (let i = 0; i < group.length; i++) {
+                        let mask = group[i];
+                        const maskArea = document.createElement("a");
+                        maskArea.style.position = "absolute";
+                        maskArea.style.left = mask[0] * imgWidth + "px";
+                        maskArea.style.top = mask[1] * imgHeight + "px";
+                        maskArea.style.width = mask[2] * imgWidth + "px";
+                        maskArea.style.height = mask[3] * imgHeight + "px";
+                        maskArea.style.pointerEvents = "auto";
+                        maskArea.style.opacity = 1;
+                        maskArea.className = "overlay-second";
+                        maskArea.setAttribute("cloze_id", cloze_id);
+                        maskArea.onclick = function () {
+                            [].forEach.call(
+                                maskOverlay.querySelectorAll(`a[cloze_id=${cloze_id}]`),
+                                (ele) => {
+                                    ele.style.opacity = ele.style.opacity >= 0.5 ? 0.1 : 1;
+                                }
+                            );
+                        };
+                        maskOverlay.appendChild(maskArea);
+                    }
+                }
+            }
+        }
+        reload_img();
+    }
+
+    function mask_all_guess_all_init() { }
+
+    function mask_one_guess_one_init() { }
+
+    function switch_card() {
+        let cloze_id = cloze_ids[idx];
+        const maskOverlay = document.querySelector(".mask-overlay");
+        if (mode === "mask_one_guess_one") {
+            [].forEach.call(maskOverlay.querySelectorAll("a"), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        if (flags[idx]) {
+                            ele.style.opacity = 0.1;
+                        } else {
+                            ele.style.opacity = 1;
+                        }
+                    } else {
+                        ele.style.opacity = 0.1;
+                    }
+                }
+            });
+        } else if (mode === "mask_all_guess_one") {
+            [].forEach.call(maskOverlay.querySelectorAll("a"), (ele) => {
+                let cur_cloze_id = ele.getAttribute("cloze_id");
+                if (cur_cloze_id) {
+                    if (cur_cloze_id === cloze_id) {
+                        ele.className = "overlay";
+                        if (flags[idx]) {
+                            ele.style.opacity = 0.1;
+                        } else {
+                            ele.style.opacity = 1;
+                        }
+                    } else {
+                        ele.style.opacity = 1;
+                        ele.className = "overlay-second";
+                    }
+                }
+            });
+        }
+    }
+
+    function init() {
+        switch (mode) {
+            case "free_guess": {
+                free_guess_init();
+                break;
+            }
+            case "mask_one_guess_one": {
+                mask_one_guess_one_init();
+                break;
+            }
+            case "mask_all_guess_one": {
+                mask_all_guess_one_init();
+                break;
+            }
+            case "mask_all_guess_all": {
+                mask_all_guess_all_init();
+                break;
+            }
+            case "mask_half_guess_one": {
+                mask_all_guess_one_init();
+                break;
+            }
+            case "mask_one_guess_one_multi": {
+                mask_one_guess_one_multi_init();
+                break;
+            }
+            case "mask_all_guess_one_multi": {
+                mask_all_guess_one_multi_init();
+                break;
+            }
+        }
+    }
+    function handleResize() {
+        init();
+        switch_card();
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+</script>

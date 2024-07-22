@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Word Card",
+    "Fields": ["ID", "Image", "Masks", "Source", "Notes", "Mode", "Index", "word", "tags", "phonetic", "variants", "definition", "word_image", "sentences", "affix", "phrases", "meaning_distribution", "pos_distribution"]
+}

@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Choice Card",
+    "Fields": ["Question", "Options", "Answers", "Remarks", "Notes"]
+}
