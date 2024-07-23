@@ -50,11 +50,38 @@ def createTemplate(config):
 
 
 def updateTemplate(config):
-    m = mw.col.models
     model = mw.col.models.byName(config["Name"])
-    model["tmpls"][0]["qfmt"] = config['Front']
+
+    # 更新字段
+    update_fields(model, config['Fields'])
+
+    # 更新代码
     model["tmpls"][0]["afmt"] = config['Back']
+    model["tmpls"][0]["qfmt"] = config['Front']
     model["css"] = config['Css']
+    mw.col.models.save(model)
+
+def update_fields(model, inOrderFields):
+    m = mw.col.models
+    fieldMap = m.field_map(model)
+    exist_fields = [field['name'] for field in model['flds']]
+    # 删除旧字段
+    for field in exist_fields:
+        if field not in inOrderFields:
+            field_obj = fieldMap[field][1]
+            m.remove_field(model, field_obj)
+
+    # 添加新字段
+    for new_field in inOrderFields:
+        if new_field not in exist_fields:
+            m.add_field(model, m.newField(new_field))
+    mw.col.models.save(model)
+    
+    # 调整字段顺序
+    fieldMap = m.field_map(model)
+    for idx, new_field in enumerate(inOrderFields):
+        field_obj = fieldMap[new_field][1]
+        m.reposition_field(model, field_obj, idx)
     mw.col.models.save(model)
 
 
