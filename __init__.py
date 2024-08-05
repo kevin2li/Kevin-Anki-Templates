@@ -39,7 +39,7 @@ def createTemplate(config):
     m = mw.col.models
     model = m.new(config["Name"])
     model["flds"] = [m.newField(field) for field in config['Fields']]
-    template = m.newTemplate(config["Name"])
+    template = m.newTemplate("Card 1")
     template["qfmt"] = config['Front']
     template["afmt"] = config['Back']
     model["css"] = config['Css']
