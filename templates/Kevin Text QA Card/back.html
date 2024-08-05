@@ -1,12 +1,14 @@
 
 <!-- Author: Kevin2li -->
-<!-- Github: https://github.com/kevin2li -->
+<!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
+
 <div id='q_div'>{{Front}}</div>
 {{#Hint}}
 <div>提示: {{Hint}}</div>
 {{/Hint}}
 <hr id=answer>
 <div id='a_div'></div>
+<div style="text-align: center"><button onclick="go_all()">全部显示</button></div>
 <script type="text/javascript">
     var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
     var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -54,6 +56,12 @@
                 })
             }
         });
+    }
+    function go_all(){
+        [].forEach.call(a_div.querySelectorAll(`span[cloze_id]`), (ele) => {
+            ele.innerHTML = ele.getAttribute("cloze_text");
+            ele.className = "cloze-show";
+        })
     }
     free_guess_init();
 </script>

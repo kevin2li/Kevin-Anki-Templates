@@ -1,3 +1,6 @@
+<!-- Author: Kevin2li -->
+<!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
+<script src="__anki-persistence.js"></script>
 
 <div class="card">
     {{#Header}}
@@ -14,7 +17,9 @@
         <div class="mask-overlay"></div>
     </div>
     <div>{{Notes}}</div>
-    <div id="debug"></div>
+    <div style="text-align:center">
+        <button onclick="go_all()">显示全部</button>
+    </div>
 </div>
 <script>
     var idx = 0;
@@ -115,6 +120,7 @@
         switch_card();
     }
     function go_all() {
+        console.log("go_all");
         if (flags.includes(false)) {
             flags.fill(true);
         } else {

@@ -1,76 +1,76 @@
-
 <!-- Author: Kevin2li -->
-<!-- Github: https://github.com/kevin2li -->
+<!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
+
+<script src="__anki-persistence.js"></script>
 <div class="card">
     <div class="back">
-      {{^反转}}
-      <div class="original-text">{{原文}}</div>
-      <div class="notes1">{{笔记1}}</div>
-      <div class="source">{{出处}}</div>
-      <div class="remark">{{备注}}</div>
-      <hr id="answer">
-      <div class="notes2" id="notes2">{{笔记2}}</div>
-      {{/反转}}
-      {{#反转}}
-      <div class="notes1">{{笔记2}}</div>
-      <div class="source">{{出处}}</div>
-      <div class="remark">{{备注}}</div>
-      <hr id="answer">
-      <div class="original-text">{{原文}}</div>
-      <div class="notes2">{{笔记1}}</div>
-      {{/反转}}
+        {{^反转}}
+        <div class="original-text">{{原文}}</div>
+        <div class="notes1">{{笔记1}}</div>
+        <div class="source">{{出处}}</div>
+        <div class="remark">{{备注}}</div>
+        <hr id="answer">
+        <div class="notes2" id="notes2">{{笔记2}}</div>
+        {{/反转}}
+        {{#反转}}
+        <div class="notes1">{{笔记2}}</div>
+        <div class="source">{{出处}}</div>
+        <div class="remark">{{备注}}</div>
+        <hr id="answer">
+        <div class="original-text">{{原文}}</div>
+        <div class="notes2">{{笔记1}}</div>
+        {{/反转}}
     </div>
-  </div>
-  
-  <script type="text/javascript">
-      var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
-      var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-      var idx = 0;
-      var cloze_ids = new Array();
-      function free_guess_init() {
-          let matches;
-          let last_pos = 0;
-          const text = `{{笔记2}}`;
-          var q_div = document.getElementById("notes2");
-          q_div.innerHTML = "";
-          while ((matches = cloze_regex.exec(text)) !== null) {
-              let index = matches[1];
-              let content = matches[2];
-              let start = matches.index;
-              let end = start + matches[0].length;
-              if (start >= last_pos) {
-                  let pos = Math.max(0, last_pos - 1);
-                  let span = document.createElement("span");
-                  span.innerHTML = `${text.slice(pos, start)}`;
-                  q_div.appendChild(span);
-              }
-              let cloze_id = `c${index}`;
-              let span = document.createElement("span");
-              span.setAttribute("cloze_id", cloze_id);
-              span.setAttribute("cloze_text", content);
-              span.innerHTML = mask;
-              span.className = "cloze-hide";
-              span.onclick = () => {
-                  [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
-                      if (ele.className === 'cloze-hide') {
-                          ele.innerHTML = ele.getAttribute("cloze_text");
-                          ele.className = "cloze-show";
-                      } else {
-                          ele.innerHTML = mask;
-                          ele.className = "cloze-hide";
-                      }
-                  })
-              }
-              q_div.appendChild(span);
-              last_pos = end + 1;
-          }
-          if (text.length >= last_pos) {
-              let pos = Math.max(0, last_pos - 1);
-              let span = document.createElement("span");
-              span.innerHTML = `${text.slice(pos, text.length)}`;
-              q_div.appendChild(span);
-          }
-      }
-      free_guess_init();
-  </script>
-  
+</div>
+
+<script type="text/javascript">
+    var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
+    var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    var idx = 0;
+    var cloze_ids = new Array();
+    function free_guess_init() {
+        let matches;
+        let last_pos = 0;
+        const text = `{{笔记2}}`;
+        var q_div = document.getElementById("notes2");
+        q_div.innerHTML = "";
+        while ((matches = cloze_regex.exec(text)) !== null) {
+            let index = matches[1];
+            let content = matches[2];
+            let start = matches.index;
+            let end = start + matches[0].length;
+            if (start >= last_pos) {
+                let pos = Math.max(0, last_pos - 1);
+                let span = document.createElement("span");
+                span.innerHTML = `${text.slice(pos, start)}`;
+                q_div.appendChild(span);
+            }
+            let cloze_id = `c${index}`;
+            let span = document.createElement("span");
+            span.setAttribute("cloze_id", cloze_id);
+            span.setAttribute("cloze_text", content);
+            span.innerHTML = mask;
+            span.className = "cloze-hide";
+            span.onclick = () => {
+                [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                    if (ele.className === 'cloze-hide') {
+                        ele.innerHTML = ele.getAttribute("cloze_text");
+                        ele.className = "cloze-show";
+                    } else {
+                        ele.innerHTML = mask;
+                        ele.className = "cloze-hide";
+                    }
+                })
+            }
+            q_div.appendChild(span);
+            last_pos = end + 1;
+        }
+        if (text.length >= last_pos) {
+            let pos = Math.max(0, last_pos - 1);
+            let span = document.createElement("span");
+            span.innerHTML = `${text.slice(pos, text.length)}`;
+            q_div.appendChild(span);
+        }
+    }
+    free_guess_init();
+</script>
