@@ -2,18 +2,25 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 
-<div id='q_div'>{{Front}}</div>
-{{#Hint}}
-<div>提示: {{Hint}}</div>
-{{/Hint}}
+<div id='q_div'>
+    {{Front}}
+    {{#Hint}}
+    <div>
+        <div class="hint">提示: {{Hint}}</div>
+    </div>
+    {{/Hint}}
+</div>
 <hr id=answer>
 <div id='a_div'></div>
-<div style="text-align: center"><button onclick="go_all()">全部显示</button></div>
+<div id="show_div" style="text-align: center;display: none"><a class="show_btn" onclick="go_all()">全部显示</a></div>
+
 <script type="text/javascript">
     var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
     var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
     var idx = 0;
     var cloze_ids = new Array();
+    var has_cloze = false;
+    var show_all_flag = true;
     function free_guess_init() {
         let matches;
         let last_pos = 0;
@@ -21,6 +28,7 @@
         const text = `{{Back}}`;
         var a_div = document.getElementById("a_div");
         while ((matches = cloze_regex.exec(text)) !== null) {
+            has_cloze = true;
             let index = matches[1];
             let content = matches[2];
             let start = matches.index;
@@ -56,12 +64,26 @@
                 })
             }
         });
+        if(has_cloze){
+            var show_div = document.getElementById("show_div");
+            show_div.style.display = "block";
+        }
     }
+    
     function go_all(){
-        [].forEach.call(a_div.querySelectorAll(`span[cloze_id]`), (ele) => {
-            ele.innerHTML = ele.getAttribute("cloze_text");
-            ele.className = "cloze-show";
-        })
+        if(show_all_flag){
+            [].forEach.call(a_div.querySelectorAll(`span[cloze_id]`), (ele) => {
+                ele.innerHTML = ele.getAttribute("cloze_text");
+                ele.className = "cloze-show";
+            })
+        }else{
+            [].forEach.call(a_div.querySelectorAll(`span[cloze_id]`), (ele) => {
+                ele.innerHTML = mask;
+                ele.className = "cloze-hide";
+            })
+        }
+        show_all_flag = !show_all_flag;
     }
+
     free_guess_init();
 </script>

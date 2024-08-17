@@ -1,0 +1,43 @@
+@charset "UTF-8";
+.text-color-dark{
+    color: #51565d;
+}
+.text-color-red{
+    color: #dc2d1e;
+}
+.text-color-yellow{
+    color: #ffaf38;
+}
+.text-color-green{
+    color: #75c940;
+}
+.text-color-blue{
+    color: #3da8f5;
+}
+.text-color-purple{
+    color: #797ec9;
+}
+.bold{
+    font-weight: bold;
+}
+.underline{
+    text-decoration: underline;
+}
+.strikethrough{
+    text-decoration: line-through;
+}
+.italic{
+    font-style: italic;
+}
+.highlight-yellow{
+    background-color: #787a24;
+}
+
+.kevin-cloze {
+    background-color: #f5f5f5;
+    border: 1px solid #dcdcdc;
+    opacity: 0;
+}
+.no-kevin-cloze{
+    background-color: #fff;
+}

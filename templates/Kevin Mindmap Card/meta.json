@@ -1,0 +1,4 @@
+{
+    "Name": "Kevin Mindmap Card",
+    "Fields": ["ID", "MapID", "Path", "Source", "Index", "Notes"]
+}

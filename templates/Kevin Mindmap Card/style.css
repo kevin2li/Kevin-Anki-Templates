@@ -1,0 +1,69 @@
+
+.card {
+    font-family: arial;
+    font-size: 20px;
+    text-align: auto;
+    color: black;
+    background-color: white;
+}
+
+html, body, #content, #qa, .container {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.source {
+    background-color: #eaeaea; 
+    text-align: left;
+    font-size: small;
+    font-family: Microsoft YaHei;
+    color: #929292;
+}
+.upper {
+    flex: 1; 
+    background-color: #eaeaea; 
+}
+.lower {
+    background-color: #eaeaea; 
+    color: white; 
+    display: flex;
+    justify-content: space-around;
+    padding: 0 10px; 
+}
+
+.lower a {
+    padding: 4px;
+    font-size: 16px;
+    min-width: 18%;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px;
+}
+.lower a:hover{
+    background-color: #0056b3;
+}
+
+span.keywords {
+    cursor: pointer;
+    background: rgba(255, 0, 0, 0.2);
+}
+span.cloze {
+    cursor: pointer;
+    color: transparent;
+    /* text-shadow: 0 0 5px rgba(0,0,0,0.5); */
+    /* filter: blur(4px); */
+    background: #ec625d;
+}

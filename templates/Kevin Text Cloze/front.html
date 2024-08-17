@@ -16,6 +16,7 @@
     var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
     var idx = 0;
     var cloze_ids = new Array();
+    var flags = new Array();
     if (Persistence.isAvailable()) {
         Persistence.setItem("idx", idx);
         Persistence.setItem("cloze_ids", cloze_ids);
@@ -365,8 +366,13 @@
                 let cur_cloze_id = ele.getAttribute("cloze_id");
                 if (cur_cloze_id) {
                     if (cur_cloze_id === cloze_id) {
-                        ele.innerHTML = mask;
-                        ele.className = "cloze-hide";
+                        if(!flags[idx]){
+                            ele.innerHTML = mask;
+                            ele.className = "cloze-hide";
+                        }else{
+                            ele.innerHTML = ele.getAttribute("cloze_text");
+                            ele.className = "cloze-show";
+                        }
                         ele.onclick = () => {
                             [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
                                 if (ele.className === 'cloze-hide') {
@@ -389,8 +395,13 @@
                 let cur_cloze_id = ele.getAttribute("cloze_id");
                 if (cur_cloze_id) {
                     if (cur_cloze_id === cloze_id) {
-                        ele.innerHTML = mask;
-                        ele.className = "cloze-hide";
+                        if(!flags[idx]){
+                            ele.innerHTML = mask;
+                            ele.className = "cloze-hide";
+                        }else{
+                            ele.innerHTML = ele.getAttribute("cloze_text");
+                            ele.className = "cloze-show";
+                        }
                         ele.onclick = () => {
                             [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cur_cloze_id}]`), (ele) => {
                                 if (ele.className === 'cloze-hide') {
@@ -473,22 +484,39 @@
     }
     function go_next() {
         const n = cloze_ids.length;
+        if (!flags[idx]) {
+            flags[idx] = !flags[idx];
+            switch_card();
+            return;
+        }
+        flags[idx] = true;
         idx = (idx + 1) % n;
+        flags[idx] = false;
         let progress = document.getElementById("progress");
         progress.innerHTML = `${idx + 1}/${n}`;
         switch_card();
         if (Persistence.isAvailable()) {
             Persistence.setItem("idx", idx);
+            Persistence.setItem("flags", flags);
         }
     }
     function go_prev() {
         const n = cloze_ids.length;
-        idx = Math.max(0, (idx - 1) % n);
+        if (!flags[idx]) {
+            console.log("hit");
+            flags[idx] = !flags[idx];
+            switch_card();
+            return;
+        }
+        flags[idx] = true;
+        idx = (idx - 1 + n) % n;
+        flags[idx] = false;
         let progress = document.getElementById("progress");
         progress.innerHTML = `${idx + 1}/${n}`;
         switch_card();
         if (Persistence.isAvailable()) {
             Persistence.setItem("idx", idx);
+            Persistence.setItem("flags", flags);
         }
     }
     document.addEventListener("keyup", (event) => {
@@ -531,10 +559,4 @@
     if (Persistence.isAvailable()) {
         Persistence.setItem("cloze_ids", cloze_ids);
     }
-    // let debugDiv = document.getElementById("debug");
-    // let out = "";
-    // for (let i = 0; i < results.length; i++) {
-    //     out += `${i}: ${results[i]}<br>`
-    // }
-    // debugDiv.innerHTML = `${out}`;
 </script>

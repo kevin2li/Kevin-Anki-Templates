@@ -7,7 +7,7 @@
 .card {
     font-family: arial;
     font-size: 20px;
-    text-align: left;
+    text-align: auto;
     color: black;
     background-color: white;
 }
@@ -75,4 +75,60 @@ mark.magenta{
 
 .font_red{
     color: red;
+}
+
+
+#q_div, #a_div {
+    font-size: 1.2em;
+    color: #333;
+    background-color: #f8f8f8;
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hint {
+    display: inline-block;
+    font-size: 0.8em;
+    margin: 0.5em 0;
+    color: #00c482;
+    background: #e8f7ec;
+    border-radius: 5px;
+}
+
+.hint_btn {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: #f0f0f0;
+    padding: 0.4em;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0.2em;
+    cursor: pointer;
+    border-radius: 0.8em;
+}
+
+.hint_btn:hover {
+    background-color: #45a049;
+}
+
+.show_btn {
+    background-color: #3153f5; /* Green */
+    border: none;
+    color: #f0f0f0;
+    padding: 0.4em 1em;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    margin: 1em;
+    cursor: pointer;
+    border-radius: 0.8em;
+}
+
+.show_btn:hover {
+    background-color: #1d2a7c;
 }

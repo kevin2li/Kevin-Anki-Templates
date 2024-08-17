@@ -1,7 +1,25 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 
-<div id='q_div'>{{Front}}</div>
-{{#Hint}}
-<div>{{hint:Hint}}</div>
-{{/Hint}}
+<div id='q_div'>
+    {{Front}}
+    {{#Hint}}
+    <div>
+        <div class="hint" id="hint_div" style="display:none">提示: {{Hint}}</div>
+        <a id="hint_btn" class="hint_btn" onclick="toggleHint()">查看提示</a>
+    </div>
+    {{/Hint}}
+</div>
+
+<script>
+    function toggleHint() {
+        var hint_div = document.getElementById('hint_div');
+        if(hint_div.style.display === 'none'){
+            hint_div.style.display = 'block';
+        }else{
+            hint_div.style.display = 'none';
+        }
+        var hint_btn = document.getElementById('hint_btn');
+        hint_btn.style.display = 'none';
+    }
+</script>
