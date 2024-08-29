@@ -44,8 +44,6 @@
 
 
 <script>
-    // const { markmap } = window;
-    const { Markmap, loadCSS, loadJS, Transformer } = markmap;
     var path = JSON.parse(`{{Path}}`);
     var fold_flag = false;
     var show_flag = false;
@@ -61,7 +59,7 @@
         console.log({mind_data});
         const svgEl = document.querySelector('#markmap');
         svgEl.innerHTML = '';
-        window.markmap.Markmap.create(svgEl, {initialExpandLevel:level}, node);
+        window.markmap.Markmap.create(svgEl, {initialExpandLevel:level, maxWidth: 300}, node);
     }
     function goto_parent() {
         if(current_path.length > 0){

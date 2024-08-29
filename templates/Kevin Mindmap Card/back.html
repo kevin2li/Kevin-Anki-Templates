@@ -1,5 +1,122 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
-{{FrontSide}}
-<hr id=answer>
-{{Notes}}
+<script src= "__d3.js" type="text/javascript"></script>
+<script src= "__markmap_lib.js" type="text/javascript"></script>
+<script src= "__markmap_view.js" type="text/javascript"></script>
+<script src= "__{{MapID}}.js" type="text/javascript"></script>
+<style>
+  @import url("__mubu.css");
+</style>
+
+<div class="container">
+    {{#Source}}
+    <div class="source">
+        <div>来源：{{Source}}</div>
+        <hr>
+    </div>
+    {{/Source}}
+    <div class="upper">
+        <svg id="markmap" style="width: 100%;height: 100%"></svg>
+    </div>
+    <div class="lower">
+        <a onclick="expand_toggle()">
+            <!-- 展开/折叠全部节点 -->
+            <img src="__goto_root.svg" />
+        </a>
+        <a onclick="goto_parent()">
+            <!-- 回到父节点 -->
+            <img src="__goto_parent.svg" />
+        </a>
+        <a onclick="goto_current()">
+            <!-- 回到初始节点 -->
+            <img src="__goto_origin.svg" />
+        </a>
+        <a onclick="fold_toggle()">
+            <!-- 展开/折叠 -->
+            <img src="__fold_toggle.svg" />
+        </a>
+        <a id="preview_btn" onclick="preview_toggle()">
+            <!-- 显示/隐藏挖空 -->
+            <img src="__eye.svg" />
+        </a>
+    </div>
+    <div>{{Notes}}</div>
+</div>
+<hr id="ansert">
+
+
+<script>
+    var path = JSON.parse(`{{Path}}`);
+    var fold_flag = false;
+    var show_flag = false;
+    var expand_flag = true;
+    var current_path = path;
+    function render(path, level){
+        let data = window.sessionStorage.getItem('mindmap_data');
+        let mind_data = JSON.parse(data);
+        var node = mind_data;
+        for(const p of path){
+            node = node.children[p];
+        }
+        console.log({mind_data});
+        const svgEl = document.querySelector('#markmap');
+        svgEl.innerHTML = '';
+        window.markmap.Markmap.create(svgEl, {initialExpandLevel:level, maxWidth: 300}, node);
+    }
+    function goto_parent() {
+        if(current_path.length > 0){
+            current_path.pop();
+            fold_flag = false;
+            render(current_path, 1);
+        }else{
+            alert("已经是根节点了");
+        }
+    }
+    function goto_current() {
+        let path = JSON.parse(`{{Path}}`);
+        current_path = path;
+        fold_flag = false;
+        expand_flag = true;
+        render(path, 2)
+    }
+    function expand_toggle(){
+        if(expand_flag){
+            render([], undefined)
+            fold_flag = true;
+        }else{
+            current_path = [];
+            render([], 1);
+            fold_flag = false;
+        }
+        expand_flag = !expand_flag;
+    }
+    function fold_toggle(){
+        if(fold_flag){
+            render(current_path, 1)
+        }else{
+            render(current_path, 2)
+        }
+        fold_flag = !fold_flag;
+    }
+    function preview_toggle(){
+        let btn = document.querySelector('#preview_btn');
+        if(show_flag){
+            // btn.innerHTML = `<img src="__eye.svg" />`;
+            document.querySelectorAll("span.keywords").forEach(ele => {
+                if(ele.classList.contains("cloze")){
+                    ele.classList.toggle("cloze");
+                }
+            });
+        }else{
+            // btn.innerHTML = `<img src="__noeye.svg" />`;
+            document.querySelectorAll("span.keywords").forEach(ele => {
+                if(!ele.classList.contains("cloze")){
+                    ele.classList.toggle("cloze");
+                }
+            });
+        }
+        show_flag = !show_flag;
+    }
+    goto_current();
+    preview_toggle();
+</script>

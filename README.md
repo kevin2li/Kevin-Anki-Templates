@@ -24,5 +24,6 @@
 
 插件安装后可以自动导入或更新这些模板。
 
-Github传送门： [https://github.com/kevin2li/Kevin-Anki-Templates](https://github.com/kevin2li/Kevin-Anki-Templates)
+Github传送门： [https://github.com/kevin2li/Kevin-Anki-Templates](https://github.com/kevin2li/Kevin-Anki-Templates)  
+
 Ankiweb传送门：[https://ankiweb.net/shared/info/1700785910](https://ankiweb.net/shared/info/1700785910)
