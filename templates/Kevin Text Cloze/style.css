@@ -41,6 +41,9 @@
     border-bottom: 1px solid var(--yellow);
     cursor: pointer;
 }
+p,ul,ol,li {
+    margin: 0;
+}
 table {
     border-collapse: collapse;
 }

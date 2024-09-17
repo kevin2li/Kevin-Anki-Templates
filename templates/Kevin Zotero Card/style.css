@@ -15,12 +15,13 @@
 }
 
 .original-text {
-    background-color: #e8f5e9;
-    /* color: #007bff; */
-    padding: 8px 4px;
-    font-family: Microsoft YaHei;
-    font-size:x-large;
-    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #333;
+    background-color: #f8f8f8;
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: pre-wrap;
 }
 
@@ -44,8 +45,13 @@
 .notes1{
     font-family: Arial, Helvetica, sans-serif;
     margin-bottom: 4px;
+    white-space: pre-wrap;
 }
 
+.notes2{
+    font-family: Arial, Helvetica, sans-serif;
+    white-space: pre-wrap;
+}
 
 .cloze-hide {
     font-weight: bold;
@@ -75,4 +81,8 @@
     color: var(--yellow);
     border-bottom: 1px solid var(--yellow);
     cursor: pointer;
+}
+
+p,ul,ol,li {
+    margin: 0;
 }

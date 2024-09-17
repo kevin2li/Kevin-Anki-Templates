@@ -1,4 +1,3 @@
-
 .card {
     font-family: arial;
     font-size: 20px;
@@ -355,4 +354,8 @@ table thead tr {
 table td {
     border: 1px solid #dddddd;
     text-align: center;
+}
+
+p,ul,ol,li {
+    margin: 0;
 }
