@@ -1,0 +1,1 @@
+zip -r ../kevin_anki_templates.ankiaddon * 

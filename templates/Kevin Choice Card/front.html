@@ -1,7 +1,6 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 <script src="__anki-persistence.js"></script>
-<script src="__keyboard.min.js"></script>
 <div class="detail-body">
   <div class="question">
     <div class="q-header">
@@ -17,7 +16,7 @@
     <hr />
     <div class="q-body">{{Question}}</div>
     <div id="q-clozes"></div>
-    <div class="q-answers" id="q-options"></div>
+    <div class="q-answers" id="q-options">{{Options}}</div>
     <div id="show_tag"></div>
   </div>
 </div>
@@ -107,7 +106,6 @@
       </div>
   </div>
 </div>
-
 <script>
   // 打开弹窗的函数
   function openPopup() {
@@ -286,7 +284,7 @@
   }
 
   function updateOptions() {
-    var options = `{{Options}}`.split("||");
+    var options = document.getElementById("q-options").innerHTML.split("||");
     var answers = `{{Answers}}`.split("||");
     var q_options_div = document.getElementById("q-options");
     q_options_div.style.display = "block";
@@ -309,7 +307,8 @@
       option_div.className = "q-answer choosable normal";
       option_div.setAttribute("seq", i + 1);
       option_div.setAttribute("val", val + 1);
-      option_div.innerHTML = String.fromCharCode(65 + i) + ". " + options[val];
+      // option_div.innerHTML = String.fromCharCode(65 + i) + ". " + options[val];
+      option_div.innerHTML = `<span>${String.fromCharCode(65 + i)}. ${options[val]}</span>`;
       option_div.onclick = function () {
         if (answers.length <= 1) {
           // 清除其他选中
@@ -411,9 +410,7 @@
     console.log("e.key:", e.key);
     if (e.key >= "1" && e.key <= "7") {
       let id = parseInt(e.key - '1');
-      var q_options_div = document.getElementById("q-options");
-      var option_div = q_options_div.children[id];
-      option_div.click();
+      document.getElementById("q-options")?.children[id]?.click();
     }
     document.addEventListener("keyup", keyboardHandler, {once: true});
   }

@@ -1,7 +1,6 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 <script src="__anki-persistence.js"></script>
-<script src="__keyboard.min.js"></script>
 <div class="detail-body">
   <div class="question">
     <div class="q-header">
@@ -17,7 +16,7 @@
     <hr />
     <div class="q-body">{{Question}}</div>
     <div id="q-clozes"></div>
-    <div class="q-answers" id="q-options"></div>
+    <div class="q-answers" id="q-options">{{Options}}</div>
     <div id="show_tag"></div>
     <br />
   </div>
@@ -384,7 +383,7 @@
   }
   // 更新选项
   function updateOptions() {
-    var options = `{{Options}}`.split("||");
+    var options = document.getElementById("q-options").innerHTML.split("||");
     var correctAnswers = `{{Answers}}`.split("||");
     var selectedOptions = [];
     if (Persistence.isAvailable()) {
@@ -400,7 +399,7 @@
       var option_div = document.createElement("div");
       let val = (data + 1).toString();
       option_div.setAttribute("data", val);
-      option_div.innerHTML = `${String.fromCharCode(65 + i)}. ${options[data]}`;
+      option_div.innerHTML = `<span>${String.fromCharCode(65 + i)}. ${options[data]}</span>`;
       if (selectedOptions.includes(val) && correctAnswers.includes(val)) {
         option_div.className = "q-answer correct";
         option_div.innerHTML += `<img src="__correct.svg" class="icon" />`;

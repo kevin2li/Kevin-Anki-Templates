@@ -14,11 +14,10 @@
     {{#Source}}
     <div>{{Source}}</div>
     {{/Source}}
-    <div id="nav" style="display: none; text-align: center">
-        <button id="prev" onclick="go_prev()">
-            < </button>
-                <span id="progress"></span>
-                <button id="next" onclick="go_next()">></button>
+    <div id="nav" style="display: none;text-align:center">
+        <a id="prev" class="nav_btn" onclick="go_prev()"><img src="__prev.svg" style="width:1em;" /> </a>
+        <span id="progress" class="nav_progress"></span>
+        <a id="next" class="nav_btn" onclick="go_next()"><img src="__next.svg" style="width:1em;"/></a>
     </div>
     <div id="debug"></div>
 </div>
@@ -695,7 +694,7 @@
         switch_card();
     }
     handleResize();
-    
+
     // 绑定快捷键
     function keyboardHandler(e) {
         console.log("e.key:", e.key);
