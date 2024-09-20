@@ -1,3 +1,4 @@
+
 .card {
     font-family: arial;
     font-size: 20px;
@@ -6,49 +7,73 @@
     background-color: white;
 }
 
-.header {
+.header{
     font-size: x-large;
     font-weight: bold;
     padding: 8px;
 }
 
 .image-container {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 img {
-    width: 100%;
-    height: auto;
-    max-width: none;
-    max-height: none;
-    position: relative;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  position: relative;
 }
 
 .mask-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: red;
-    opacity: 1;
-    pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: red;
+  opacity: 1;
+  pointer-events: none;
 }
 
 .overlay {
-    position: absolute;
-    background: #ff5656;
-    opacity: 1;
+  position: absolute;
+  background: #ff5656;
+  opacity: 1;
 }
 
 .overlay-second {
-    position: absolute;
-    background: #ffeba2;
-    opacity: 1;
+  position: absolute;
+  background: #ffeba2;
+  opacity: 1;
 }
 
 .scratch-area {
     position: absolute;
     cursor: pointer;
+}
+
+#nav{
+    margin-top: 1em;
+}
+.nav_btn {
+    padding: 4px;
+    font-size: 16px;
+    min-width: 2em;
+    color: #fff;
+    background-color: #eee;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.nav_progress {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
 }

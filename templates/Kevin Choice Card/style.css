@@ -119,6 +119,15 @@
     color: #00c482;
     background: #e8f7ec;
     border-radius: 5px;
+    margin: 0 0.2em;
+}
+
+.question .q-deck {
+    display: inline-block;
+    padding: 5px 10px;
+    color: #8dacf0;
+    border-radius: 5px;
+    margin: 0 0.2em;
 }
 
 .solution .explain {
@@ -143,12 +152,10 @@
 }
 
 .submit-btn {
-    /* background-color: #cb1e1e; */
-    /* color: #fff; */
     color: #42a5f5;
-    border: none;
+    /* border: 1px solid #eee; */
     border-radius: 4px;
-    padding: 10px 20px;
+    padding: 0.3em;
     cursor: pointer;
     transition: background-color 0.3s;
 }
@@ -358,4 +365,25 @@ table td {
 
 p,ul,ol,li {
     margin: 0;
+}
+
+
+:root{
+    --yellow: #f67c01;
+    --blue: #2097f3;
+}
+
+.cloze-hide {
+    font-weight: bold;
+    color: var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
+    /* filter: blur(0.25em); */
+}
+
+.cloze-show {
+    font-weight: bold;
+    color:var(--blue);
+    border-bottom: 1px solid var(--blue);
+    cursor: pointer;
 }

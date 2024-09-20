@@ -1,50 +1,55 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 <script src="__anki-persistence.js"></script>
+<script src="__keyboard.min.js"></script>
 <div class="detail-body">
   <div class="question">
     <div class="q-header">
       <span>
-        <svg
-          t="1712147420704"
-          class="icon"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="4223"
-          width="1em"
-          height="1em"
-          style="vertical-align: -0.15em; margin-right: 5px"
-        >
-          <path
-            d="M256 896a42.666667 42.666667 0 0 1-20.906667-5.546667A42.666667 42.666667 0 0 1 213.333333 853.333333V227.413333A97.28 97.28 0 0 1 307.2 128h409.6A97.28 97.28 0 0 1 810.666667 227.413333V853.333333a42.666667 42.666667 0 0 1-21.333334 36.693334 42.666667 42.666667 0 0 1-42.666666 0l-241.92-136.96-227.413334 136.533333A42.666667 42.666667 0 0 1 256 896z"
-            p-id="4224"
-            fill="#707070"
-          ></path>
-        </svg>
+        <img src="__bookmark.svg" />
         <b id="q_type"></b>
       </span>
-      <button class="submit-btn" onclick="openPopup()" style="float: right">
-        卡片设置
-      </button>
+      <div id="show_deck"></div>
+      <a class="submit-btn" onclick="openPopup()">
+        <img src="__setting.svg"  style="width:1.8em"/>
+      </a>
     </div>
     <hr />
     <div class="q-body">{{Question}}</div>
+    <div id="q-clozes"></div>
     <div class="q-answers" id="q-options"></div>
-    <!-- <div class="q-tag"></div> -->
-    <br />
+    <div id="show_tag"></div>
   </div>
 </div>
-
 <div id="settingsModal" class="settings-container" style="display: none">
   <div class="modal-content">
     <span class="close-popup" onclick="closePopup()">&times;</span>
     <div class="settings-block">
       <div class="single-setting">
-        <div class="setting-label">显示类型</div>
+        <div class="setting-label">显示题型</div>
         <div class="setting-switch">
           <input
             id="show-type"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">显示牌组</div>
+        <div class="setting-switch">
+          <input
+            id="show-deck"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">显示标签</div>
+        <div class="setting-switch">
+          <input
+            id="show-tag"
             class="mui-switch mui-switch-anim"
             type="checkbox"
           />
@@ -79,19 +84,30 @@
             type="checkbox"
           />
         </div>
-    </div>
-    <div class="single-setting">
-      <div class="setting-label">播放音效</div>
-      <div class="setting-switch">
-        <input
-          id="play-sound"
-          class="mui-switch mui-switch-anim"
-          type="checkbox"
-        />
       </div>
-    </div>
+      <div class="single-setting">
+        <div class="setting-label">播放音效</div>
+        <div class="setting-switch">
+          <input
+            id="play-sound"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
+      <div class="single-setting">
+        <div class="setting-label">填空模式</div>
+        <div class="setting-switch">
+          <input
+            id="cloze-mode"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
   </div>
 </div>
+
 <script>
   // 打开弹窗的函数
   function openPopup() {
@@ -113,58 +129,56 @@
     document.getElementById("qa").style.display = "block";
   }
   //  功能配置
-  var show_type = document.getElementById("show-type");
+  var config_map = {
+    "show_type"    : true, // 显示题型
+    "show_deck"    : true, // 显示牌组
+    "show_tag"     : true, // 显示标签
+    "random_option": false, // 随机选项
+    "auto_flip"    : true, // 自动翻转
+    "statistics"   : true, // 显示统计信息
+    "play_sound"   : true, // 播放音效
+    "cloze_mode"   : false, // 填空模式
+  };
+  var show_type     = document.getElementById("show-type");
+  var show_deck     = document.getElementById("show-deck");
+  var show_tag      = document.getElementById("show-tag");
   var random_option = document.getElementById("random-option");
-  var auto_flip = document.getElementById("auto-flip");
-  var statistics = document.getElementById("statistics");
-  var play_sound = document.getElementById("play-sound");
-  SHOW_TYPE = true;
-  RANDOM_OPTION = false;
-  AUTO_FLIP = false;
-  STATISTICS = true;
-  PLAY_SOUND = true;
+  var auto_flip     = document.getElementById("auto-flip");
+  var statistics    = document.getElementById("statistics");
+  var play_sound    = document.getElementById("play-sound");
+  var cloze_mode    = document.getElementById("cloze-mode");
+
   if (Persistence.isAvailable()) {
-    if (
-      Persistence.getItem("show_type") == undefined ||
-      Persistence.getItem("show_type") == null
-    ) {
-      Persistence.setItem("show_type", SHOW_TYPE);
+    for(const key in config_map) {
+      if (Persistence.getItem(key) == undefined || Persistence.getItem(key) == null) {
+        Persistence.setItem(key, config_map[key]);
+      }
     }
-    if (
-      Persistence.getItem("random_option") == undefined ||
-      Persistence.getItem("random_option") == null
-    ) {
-      Persistence.setItem("random_option", RANDOM_OPTION);
-    }
-    if (
-      Persistence.getItem("auto_flip") == undefined ||
-      Persistence.getItem("auto_flip") == null
-    ) {
-      Persistence.setItem("auto_flip", AUTO_FLIP);
-    }
-    if (
-      Persistence.getItem("statistics") == undefined ||
-      Persistence.getItem("statistics") == null
-    ) {
-      Persistence.setItem("statistics", STATISTICS);
-    }
-    if(
-      Persistence.getItem("play_sound") == undefined ||
-      Persistence.getItem("play_sound") == null
-    ){
-      Persistence.setItem("play_sound", PLAY_SOUND);
-    }
-    show_type.checked = Persistence.getItem("show_type");
+    show_type.checked     = Persistence.getItem("show_type");
+    show_deck.checked     = Persistence.getItem("show_deck");
+    show_tag.checked      = Persistence.getItem("show_tag");
     random_option.checked = Persistence.getItem("random_option");
-    auto_flip.checked = Persistence.getItem("auto_flip");
-    statistics.checked = Persistence.getItem("statistics");
-    play_sound.checked = Persistence.getItem("play_sound");
+    auto_flip.checked     = Persistence.getItem("auto_flip");
+    statistics.checked    = Persistence.getItem("statistics");
+    play_sound.checked    = Persistence.getItem("play_sound");
   }
 
   show_type.onchange = function () {
     if (Persistence.isAvailable()) {
       Persistence.setItem("show_type", show_type.checked);
       update_type();
+    }
+  };
+  show_deck.onchange = function () {
+    if (Persistence.isAvailable()) {
+        Persistence.setItem("show_deck", show_deck.checked);
+        update_deck();
+    }
+  };
+  show_tag.onchange = function () {
+    if (Persistence.isAvailable()) {
+        Persistence.setItem("show_tag", show_tag.checked);
+        update_tag();
     }
   };
   random_option.onchange = function () {
@@ -188,25 +202,75 @@
       Persistence.setItem("play_sound", play_sound.checked);
     }
   }
+  cloze_mode.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("cloze_mode", cloze_mode.checked);
+      if(cloze_mode.checked) {
+        updateClozes();
+      }else{
+        var q_cloze_div = document.getElementById("q-clozes");
+        q_cloze_div.style.display = "none";
+        updateOptions();
+      }
+      update_type();
+    }
+  }
   function update_type() {
     var q_type = document.getElementById("q_type");
     var answers = `{{Answers}}`.split("||");
     if (Persistence.isAvailable()) {
       var show_type = Persistence.getItem("show_type");
-      console.log({ show_type });
-      if (show_type) {
-        if (answers.length > 1) {
-          q_type.innerText = "多选题";
+      if(!Persistence.getItem("cloze_mode")){
+        if (show_type) {
+          if (answers.length > 1) {
+            q_type.innerText = "多选题";
+          } else {
+            q_type.innerText = "单选题";
+          }
         } else {
-          q_type.innerText = "单选题";
+          q_type.innerText = "选择题";
         }
-      } else {
-        q_type.innerText = "选择题";
+      }else{
+        q_type.innerText = "填空题";
       }
     }
   }
-  update_type();
-
+  function update_tag() {
+    if (Persistence.isAvailable()) {
+      var show_tag_div = document.getElementById("show_tag");
+      if(Persistence.getItem("show_tag")) {
+        show_tag_div.style.display = "block";
+        if(`{{Tags}}`.trim() == "") {
+          show_tag_div.innerHTML = "<b>标签:</b> 无";
+        }else{
+          var tags = `{{Tags}}`.split(" ");
+          tag_html = "<b>标签:</b>"
+          for(var i = 0; i < tags.length; i++) {
+            let span = document.createElement("span");
+            span.className = "q-tag";
+            span.innerText = tags[i];
+            tag_html += span.outerHTML;
+          }
+          show_tag_div.innerHTML = tag_html;
+        }
+      }else{
+        show_tag_div.innerHTML = "";
+        show_tag_div.style.display = "none";
+      }
+    }
+  };
+  function update_deck() {
+      if (Persistence.isAvailable()) {
+        var show_deck_div = document.getElementById("show_deck");
+        if(Persistence.getItem("show_deck")) {
+          show_deck_div.style.display = "block";
+          show_deck_div.innerHTML = `<b>牌组:</b>` + `<span class="q-deck">{{Deck}}</span>`;
+        }else{
+          show_deck_div.innerHTML = "";
+          show_deck_div.style.display = "none";
+        }
+      }
+  };
   function shuffleArray(array) {
     var currentIndex = array.length,
       temporaryValue,
@@ -225,6 +289,7 @@
     var options = `{{Options}}`.split("||");
     var answers = `{{Answers}}`.split("||");
     var q_options_div = document.getElementById("q-options");
+    q_options_div.style.display = "block";
     q_options_div.innerHTML = "";
     var seqs = [...Array(options.length).keys()].map((x) => x);
     console.log("before:", seqs);
@@ -288,8 +353,70 @@
       q_options_div.appendChild(option_div);
     }
   }
-  updateOptions();
-  if (Persistence.isAvailable()) {
-    Persistence.setItem("selectedOptions", []);
+
+  function updateClozes() {
+    var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    var correctAnswers = `{{Answers}}`.split("||");
+    var q_cloze_div = document.getElementById("q-clozes");
+    q_cloze_div.style.display = "block";
+    var q_options_div = document.getElementById("q-options");
+    q_options_div.style.display = "none";
+    var options = `{{Options}}`.split("||");
+    let final_html_content = "";
+    for(let i=0; i<correctAnswers.length; i++){
+      let option_content = options[parseInt(correctAnswers[i])-1];
+      let span = document.createElement("span");
+      span.setAttribute("cloze_id", `c${i}`);
+      span.setAttribute("cloze_text", `${option_content}`);
+      span.innerHTML = mask;
+      span.className = "cloze-hide";
+      final_html_content += `${span.outerHTML}`;
+      if(i!= correctAnswers.length-1) final_html_content += "，";
+    }
+    q_cloze_div.innerHTML = final_html_content;
+    document.querySelectorAll(".cloze-hide, .cloze-show").forEach(ele => {
+        let cloze_id = ele.getAttribute("cloze_id");
+        ele.onclick = () => {
+            [].forEach.call(q_cloze_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
+                if (ele.className === 'cloze-hide') {
+                    ele.innerHTML = ele.getAttribute("cloze_text");
+                    ele.className = "cloze-show";
+                } else {
+                    ele.innerHTML = mask;
+                    ele.className = "cloze-hide";
+                }
+            })
+        }
+    });
   }
+
+  if (Persistence.isAvailable()) {
+    update_type();
+    update_tag();
+    update_deck();
+    // 非填空模式
+    if(!Persistence.getItem("cloze_mode")){
+      var q_cloze_div = document.getElementById("q-clozes");
+      q_cloze_div.style.display = "none";
+      updateOptions();
+      Persistence.setItem("selectedOptions", []);
+    }else{
+      // 填空模式
+      updateClozes();
+    }
+  }
+
+  // 绑定键盘事件
+  function keyboardHandler(e) {
+    console.log("e.key:", e.key);
+    if (e.key >= "1" && e.key <= "7") {
+      let id = parseInt(e.key - '1');
+      var q_options_div = document.getElementById("q-options");
+      var option_div = q_options_div.children[id];
+      option_div.click();
+    }
+    document.addEventListener("keyup", keyboardHandler, {once: true});
+  }
+  document.addEventListener("keyup", keyboardHandler, {once: true});
+
 </script>

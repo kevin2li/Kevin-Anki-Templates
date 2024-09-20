@@ -11,7 +11,7 @@
     {{/Hint}}
 </div>
 <hr id=answer>
-<div id='a_div'></div>
+<div id='a_div'>{{Back}}</div>
 <div id="show_div" style="text-align: center;display: none"><a class="show_btn" onclick="go_all()">全部显示</a></div>
 
 <script type="text/javascript">
@@ -25,8 +25,8 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Back}}`;
         var a_div = document.getElementById("a_div");
+        const text = a_div.innerHTML;
         while ((matches = cloze_regex.exec(text)) !== null) {
             has_cloze = true;
             let index = matches[1];

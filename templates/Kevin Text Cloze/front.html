@@ -1,14 +1,12 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
-
 <script src="__anki-persistence.js"></script>
-<div id='q_div'></div>
-
+<script src="__keyboard.min.js"></script>
+<div id='q_div'>{{Front}}</div>
 <div id="nav" style="display: none;text-align:center">
-    <button id="prev" onclick="go_prev()">
-        < </button>
-            <span id="progress"></span>
-            <button id="next" onclick="go_next()">></button>
+    <a id="prev" class="nav_btn" onclick="go_prev()"><img src="__prev.svg" style="width:1em;" /> </a>
+    <span id="progress" class="nav_progress"></span>
+    <a id="next" class="nav_btn" onclick="go_next()"><img src="__next.svg" style="width:1em;"/></a>
 </div>
 <div id="debug"></div>
 <script type="text/javascript">
@@ -27,8 +25,8 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
             let content = matches[2];
@@ -71,9 +69,9 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
-        const target_index = "{{Index}}";
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
+        const target_index = "{{Index}}";
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
             let content = matches[2];
@@ -121,9 +119,9 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
-        const target_index = "{{Index}}";
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
+        const target_index = "{{Index}}";
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
             let content = matches[2];
@@ -185,9 +183,9 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
-        const target_index = "{{Index}}";
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
+        const target_index = "{{Index}}";
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
             let content = matches[2];
@@ -229,8 +227,8 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
         let match_count = 0;
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
@@ -288,9 +286,9 @@
         let matches;
         let last_pos = 0;
         final_html_content = "";
-        const text = `{{Front}}`;
-        const target_index = "{{Index}}";
         var q_div = document.getElementById("q_div");
+        const text = q_div.innerHTML;
+        const target_index = "{{Index}}";
         let match_count = 0;
         while ((matches = cloze_regex.exec(text)) !== null) {
             let index = matches[1];
@@ -519,13 +517,18 @@
             Persistence.setItem("flags", flags);
         }
     }
-    document.addEventListener("keyup", (event) => {
-        if (event.keyCode === 75 /* 'KeyK' */) {
-            go_next();
-        } else if (event.keyCode === 74 /* 'KeyJ' */) {
+    // 绑定快捷键
+    function keyboardHandler(e) {
+        console.log("e.key:", e.key);
+        if (e.key == "j") {
             go_prev();
+        }else if( e.key == "k"){
+            go_next();
         }
-    });
+        document.addEventListener("keyup", keyboardHandler, {once: true});
+    }
+    document.addEventListener("keyup", keyboardHandler, {once: true});
+
     switch (mode) {
         case "free_guess": {
             free_guess_init();

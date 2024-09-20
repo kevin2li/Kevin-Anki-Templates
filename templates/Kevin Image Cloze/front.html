@@ -695,15 +695,20 @@
         switch_card();
     }
     handleResize();
-    document.addEventListener("keyup", (event) => {
-        if (event.keyCode === 75 /* 'KeyK' */) {
-            go_next();
-        } else if (event.keyCode === 74 /* 'KeyJ' */) {
+    
+    // 绑定快捷键
+    function keyboardHandler(e) {
+        console.log("e.key:", e.key);
+        if (e.key == "j") {
             go_prev();
-        } else if (event.keyCode === 85 /* 'KeyU' */) {
+        }else if( e.key == "k"){
+            go_next();
+        }else if( e.key == "u"){
             go_all();
         }
-    });
+        document.addEventListener("keyup", keyboardHandler, {once: true});
+    }
+    document.addEventListener("keyup", keyboardHandler, {once: true});
 
     if (Persistence.isAvailable()) {
         Persistence.setItem("cloze_ids", cloze_ids);

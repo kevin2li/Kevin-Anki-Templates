@@ -2,9 +2,12 @@
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
 
 <script src="__anki-persistence.js"></script>
-<div id='q_div'></div>
+<script src="__keyboard.min.js"></script>
+<div id='q_div'>{{Front}}</div>
 <hr id=answer>
+<div id='a_div'>
 {{Back}}
+</div>
 
 <script type="text/javascript">
     var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
@@ -22,9 +25,9 @@
             let matches;
             let last_pos = 0;
             final_html_content = "";
-            const text = `{{Front}}`;
-            const target_index = "{{Index}}";
             var q_div = document.getElementById("q_div");
+            const text = q_div.innerHTML;
+            const target_index = "{{Index}}";
             while ((matches = cloze_regex.exec(text)) !== null) {
                 let index = matches[1];
                 let content = matches[2];
@@ -53,7 +56,7 @@
                 final_html_content += `${text.slice(pos, text.length)}`
             }
             q_div.innerHTML = final_html_content;
-            document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            document.querySelectorAll(".cloze-hide, .cloze-show").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -67,7 +70,7 @@
                     })
                 }
             });
-            document.querySelectorAll(".cloze-hide2, .cloze_show2").forEach(ele => {
+            document.querySelectorAll(".cloze-hide2, .cloze-show2").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -87,9 +90,9 @@
             let matches;
             let last_pos = 0;
             final_html_content = "";
-            const text = `{{Front}}`;
-            const target_index = "{{Index}}";
             var q_div = document.getElementById("q_div");
+            const text = q_div.innerHTML;
+            const target_index = "{{Index}}";
             while ((matches = cloze_regex.exec(text)) !== null) {
                 let index = matches[1];
                 let content = matches[2];
@@ -129,7 +132,7 @@
                 final_html_content += `${text.slice(pos, text.length)}`
             }
             q_div.innerHTML = final_html_content;
-            document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            document.querySelectorAll(".cloze-hide, .cloze-show").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -149,8 +152,8 @@
             let matches;
             let last_pos = 0;
             final_html_content = "";
-            const text = `{{Front}}`;
             var q_div = document.getElementById("q_div");
+            const text = q_div.innerHTML;
             while ((matches = cloze_regex.exec(text)) !== null) {
                 let index = matches[1];
                 let content = matches[2];
@@ -179,7 +182,7 @@
                 final_html_content += `${text.slice(pos, text.length)}`
             }
             q_div.innerHTML = final_html_content;
-            document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            document.querySelectorAll(".cloze-hide, .cloze-show").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -204,9 +207,9 @@
             let matches;
             let last_pos = 0;
             final_html_content = "";
-            const text = `{{Front}}`;
-            const target_index = "{{Index}}";
             var q_div = document.getElementById("q_div");
+            const text = q_div.innerHTML;
+            const target_index = "{{Index}}";
             while ((matches = cloze_regex.exec(text)) !== null) {
                 let index = matches[1];
                 let content = matches[2];
@@ -238,7 +241,7 @@
                 final_html_content += `${text.slice(pos, text.length)}`
             }
             q_div.innerHTML = final_html_content;
-            document.querySelectorAll(".cloze-hide, .cloze_show").forEach(ele => {
+            document.querySelectorAll(".cloze-hide, .cloze-show").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -252,7 +255,7 @@
                     })
                 }
             });
-            document.querySelectorAll(".cloze-hide2, .cloze_show2").forEach(ele => {
+            document.querySelectorAll(".cloze-hide2, .cloze-show2").forEach(ele => {
                 let cloze_id = ele.getAttribute("cloze_id");
                 ele.onclick = () => {
                     [].forEach.call(q_div.querySelectorAll(`span[cloze_id=${cloze_id}]`), (ele) => {
@@ -277,8 +280,8 @@
             let matches;
             let last_pos = 0;
             final_html_content = "";
-            const text = `{{Front}}`;
             var q_div = document.getElementById("q_div");
+            const text = q_div.innerHTML;
             while ((matches = cloze_regex.exec(text)) !== null) {
                 let index = matches[1];
                 let content = matches[2];
