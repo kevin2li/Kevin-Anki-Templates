@@ -49,6 +49,37 @@
     cursor: pointer;
 }
 
+/* 动画定义 */
+@keyframes reorder {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#recover_order{
+    background-color: #1b8aff; /* Green */
+    border: none;
+    color: #f0f0f0;
+    padding: 0.4em 1em;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    margin: 1em 0;
+    cursor: pointer;
+    border-radius: 0.8em;
+}
 .normal {
     background: #fff;
     border: 1px solid #f0f0f0;
@@ -124,8 +155,9 @@
 
 .question .q-deck {
     display: inline-block;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     padding: 5px 10px;
-    color: #8dacf0;
+    color: #82c0e2;
     border-radius: 5px;
     margin: 0 0.2em;
 }
@@ -188,7 +220,7 @@
     left: 0;
     top: 0;
     width: 100%;
-    height: 80%;
+    height: 100%;
     overflow: visible;
     background-color: rgba(39, 40, 34, 0.4);
 }

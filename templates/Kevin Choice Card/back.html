@@ -18,7 +18,7 @@
     <div id="q-clozes"></div>
     <div class="q-answers" id="q-options">{{Options}}</div>
     <div id="show_tag"></div>
-    <br />
+    <div><a onclick="recover_order()" style="display:none;" id="recover_order">还原顺序</a></div>
   </div>
 </div>
 <hr id="answer" />
@@ -167,6 +167,7 @@
   </div>
 </div>
 </div>
+<div id="options_data" style="display:none">{{Options}}</div>
 <script>
   // 打开弹窗的函数
   function openPopup() {
@@ -193,6 +194,7 @@
     auto_flip.checked     = Persistence.getItem("auto_flip");
     statistics.checked    = Persistence.getItem("statistics");
     play_sound.checked    = Persistence.getItem("play_sound");
+    cloze_mode.checked    = Persistence.getItem("cloze_mode");
   }
 
   show_type.onchange = function () {
@@ -314,7 +316,7 @@
       }
   };
   // 显示答案
-  function show_answers() {
+  function show_answers(option_recover=false) {
     var options = `{{Options}}`.split("||");
     var correctAnswers = `{{Answers}}`.split("||");
     var selectedOptions = [];
@@ -326,15 +328,27 @@
     var selected_letters = [];
     var seqs = [...Array(options.length).keys()].map((x) => x);
     if (Persistence.isAvailable()) {
-      seqs = Persistence.getItem("seqs");
+      if(!option_recover) {
+        seqs = Persistence.getItem("seqs");
+      }
     }
+    console.log({seqs});
+    console.log({selectedOptions});
     for (const [i, val] of seqs.entries()) {
       console.log(i, val);
       if (correctAnswers.includes((val + 1).toString())) {
-        ans_letters.push(String.fromCharCode(65 + i));
+        if(option_recover){
+          ans_letters.push(String.fromCharCode(65 + val));
+        }else{
+          ans_letters.push(String.fromCharCode(65 + i));
+        }
       }
       if (selectedOptions.includes((val + 1).toString())) {
-        selected_letters.push(String.fromCharCode(65 + i));
+        if(option_recover){
+          selected_letters.push(String.fromCharCode(65 + val));
+        }else{
+          selected_letters.push(String.fromCharCode(65 + i));
+        }
       }
     }
     console.log({ ans_letters, selected_letters });
@@ -346,6 +360,9 @@
       is_correct = true;
     } else {
       answer_div.innerHTML = `正确答案: <font color="green">${ans_letters_str}</font>&nbsp;&nbsp;你的答案：<font color="red">${selected_letters_str}</font>`;
+    }
+    if(option_recover){
+      return;
     }
     if(Persistence.isAvailable()){
       var is_play_sound = Persistence.getItem("play_sound");
@@ -382,8 +399,8 @@
     }
   }
   // 更新选项
-  function updateOptions() {
-    var options = document.getElementById("q-options").innerHTML.split("||");
+  function updateOptions(option_recover = false) {
+    var options = document.getElementById("options_data").innerHTML.split("||");
     var correctAnswers = `{{Answers}}`.split("||");
     var selectedOptions = [];
     if (Persistence.isAvailable()) {
@@ -393,7 +410,9 @@
     q_options_div.innerHTML = "";
     var seqs = [...Array(options.length).keys()].map((x) => x);
     if (Persistence.isAvailable()) {
-      seqs = Persistence.getItem("seqs");
+      if(!option_recover){
+        seqs = Persistence.getItem("seqs");
+      }
     }
     for (const [i, data] of seqs.entries()) {
       var option_div = document.createElement("div");
@@ -422,6 +441,10 @@
         }
       } else {
         option_div.className = "q-answer normal";
+      }
+      if (option_recover) {
+        option_div.className += " reorder";
+        option_div.style.animation = 'reorder 1s forwards';
       }
       q_options_div.appendChild(option_div);
     }
@@ -491,6 +514,11 @@
     });
   }
 
+  function recover_order(){
+    show_answers(true);
+    updateOptions(true);
+    updateStats();
+  }
   if (Persistence.isAvailable()) {
     update_config();
     update_type();
@@ -501,6 +529,11 @@
       show_answers();
       updateOptions();
       updateStats();
+      // 选项还原
+      console.log("random_option:", Persistence.getItem("random_option"));
+      if(Persistence.getItem("random_option")){
+        document.getElementById("recover_order").style.display = "block";
+      }
     }else{
       // 填空模式
       updateClozes();
