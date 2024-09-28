@@ -1,6 +1,9 @@
 <!-- Author: Kevin2li -->
 <!-- Github: https://github.com/kevin2li/Kevin-Anki-Templates -->
-<script src="__anki-persistence.js"></script>
+<script>
+  // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+  if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/",t="_default";if(window.Persistence_sessionStorage=function(){var i=!1;try{"object"==typeof window.sessionStorage&&(i=!0,this.clear=function(){for(var t=0;t<sessionStorage.length;t++){var i=sessionStorage.key(t);0==i.indexOf(e)&&(sessionStorage.removeItem(i),t--)}},this.setItem=function(i,n){void 0==n&&(n=i,i=t),sessionStorage.setItem(e+i,JSON.stringify(n))},this.getItem=function(i){return void 0==i&&(i=t),JSON.parse(sessionStorage.getItem(e+i))},this.removeItem=function(i){void 0==i&&(i=t),sessionStorage.removeItem(e+i)},this.getAllKeys=function(){for(var t=[],i=Object.keys(sessionStorage),n=0;n<i.length;n++){var s=i[n];0==s.indexOf(e)&&t.push(s.substring(e.length,s.length))}return t.sort()})}catch(n){}this.isAvailable=function(){return i}},window.Persistence_windowKey=function(i){var n=window[i],s=!1;"object"==typeof n&&(s=!0,this.clear=function(){n[e]={}},this.setItem=function(i,s){void 0==s&&(s=i,i=t),n[e][i]=s},this.getItem=function(i){return void 0==i&&(i=t),void 0==n[e][i]?null:n[e][i]},this.removeItem=function(i){void 0==i&&(i=t),delete n[e][i]},this.getAllKeys=function(){return Object.keys(n[e])},void 0==n[e]&&this.clear()),this.isAvailable=function(){return s}},window.Persistence=new Persistence_sessionStorage,Persistence.isAvailable()||(window.Persistence=new Persistence_windowKey("py")),!Persistence.isAvailable()){var i=window.location.toString().indexOf("title"),n=window.location.toString().indexOf("main",i);i>0&&n>0&&n-i<10&&(window.Persistence=new Persistence_windowKey("qt"))}}
+</script>
 <div class="detail-body">
   <div class="question">
     <div class="q-header">
@@ -8,15 +11,15 @@
         <img src="__bookmark.svg" />
         <b id="q_type"></b>
       </span>
-      <div id="show_deck"></div>
       <a class="submit-btn" onclick="openPopup()">
-        <img src="__setting.svg"  style="width:1.8em"/>
+        <img src="__gear.svg"  style="width:1.5em"/>
       </a>
     </div>
     <hr />
     <div class="q-body">{{Question}}</div>
     <div id="q-clozes"></div>
     <div class="q-answers" id="q-options">{{Options}}</div>
+    <div id="show_deck"></div>
     <div id="show_tag"></div>
     <div><a onclick="recover_order()" style="display:none;" id="recover_order">还原顺序</a></div>
   </div>
@@ -164,6 +167,16 @@
           />
         </div>
       </div>
+      <div class="single-setting">
+        <div class="setting-label">夜间模式</div>
+        <div class="setting-switch">
+          <input
+            id="night-mode"
+            class="mui-switch mui-switch-anim"
+            type="checkbox"
+          />
+        </div>
+      </div>
   </div>
 </div>
 </div>
@@ -186,6 +199,7 @@
   var statistics    = document.getElementById("statistics");
   var play_sound    = document.getElementById("play-sound");
   var cloze_mode    = document.getElementById("cloze-mode");
+  var night_mode    = document.getElementById("night-mode");
   function update_config() {
     show_type.checked     = Persistence.getItem("show_type");
     show_deck.checked     = Persistence.getItem("show_deck");
@@ -195,6 +209,7 @@
     statistics.checked    = Persistence.getItem("statistics");
     play_sound.checked    = Persistence.getItem("play_sound");
     cloze_mode.checked    = Persistence.getItem("cloze_mode");
+    night_mode.checked    = Persistence.getItem("night_mode");
   }
 
   show_type.onchange = function () {
@@ -259,6 +274,32 @@
       }
     }
   }
+  night_mode.onchange = function () {
+    if (Persistence.isAvailable()) {
+      Persistence.setItem("night_mode", night_mode.checked);
+    }
+    update_nightmode();
+  }
+  function update_nightmode(){
+    var roi_selectors = ["#show_deck",  "#show_tag", "#q_type", "#q-clozes", ".q-header", ".detail-body", ".question", ".q-body", ".q-answer", ".q-answers", ".answer", ".q-deck", ".q-tag", ".explain", "table", "thead tr"];
+    for(const name of roi_selectors){
+      try{
+        [].forEach.call(document.querySelectorAll(name), (ele)=>{
+          if(night_mode.checked){
+            if(!ele.classList.contains("nightMode")){
+              ele.classList.toggle("nightMode");
+            }
+          }else{
+            if(ele.classList.contains("nightMode")){
+              ele.classList.toggle("nightMode");
+            }
+          }
+        });
+      }catch(err){
+        console.log(err)
+      }
+    }
+  }
   function update_type() {
     var q_type = document.getElementById("q_type");
     var answers = `{{Answers}}`.split("||");
@@ -285,10 +326,10 @@
       if(Persistence.getItem("show_tag")) {
         show_tag_div.style.display = "block";
         if(`{{Tags}}`.trim() == "") {
-          show_tag_div.innerHTML = "<b>标签:</b> 无";
+          show_tag_div.innerHTML = "<div style='color:#707070'><b>标签:</b> 无</div>";
         }else{
           var tags = `{{Tags}}`.split(" ");
-          tag_html = "<b>标签:</b>"
+          tag_html = "<b style='color:#707070'>标签:</b>"
           for(var i = 0; i < tags.length; i++) {
             let span = document.createElement("span");
             span.className = "q-tag";
@@ -308,7 +349,7 @@
         var show_deck_div = document.getElementById("show_deck");
         if(Persistence.getItem("show_deck")) {
           show_deck_div.style.display = "block";
-          show_deck_div.innerHTML = `<b>牌组:</b>` + `<span class="q-deck">{{Deck}}</span>`;
+          show_deck_div.innerHTML = `<b style='color:#707070'>牌组:</b><span class="q-deck">{{Deck}}</span>`;
         }else{
           show_deck_div.innerHTML = "";
           show_deck_div.style.display = "none";
@@ -359,7 +400,7 @@
       answer_div.innerHTML = `正确答案: <font color="green">${ans_letters_str}</font>&nbsp;&nbsp;你的答案：<font color="green">${selected_letters_str}</font>`;
       is_correct = true;
     } else {
-      answer_div.innerHTML = `正确答案: <font color="green">${ans_letters_str}</font>&nbsp;&nbsp;你的答案：<font color="red">${selected_letters_str}</font>`;
+      answer_div.innerHTML = `正确答案: <font color="green">${ans_letters_str}</font>&nbsp;&nbsp;你的答案：<font color="#ff0000">${selected_letters_str}</font>`;
     }
     if(option_recover){
       return;
@@ -538,5 +579,6 @@
       // 填空模式
       updateClozes();
     }
+    update_nightmode();
   }
 </script>
