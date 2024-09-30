@@ -342,6 +342,7 @@
         show_tag_div.innerHTML = "";
         show_tag_div.style.display = "none";
       }
+      update_nightmode();
     }
   };
   function update_deck() {
@@ -349,11 +350,12 @@
         var show_deck_div = document.getElementById("show_deck");
         if(Persistence.getItem("show_deck")) {
           show_deck_div.style.display = "block";
-          show_deck_div.innerHTML = `<b style='color:#707070'>牌组:</b><span class="q-deck">{{Deck}}</span>`;
+          show_deck_div.innerHTML = `<div style='color:#707070'><b>牌组:</b><span class="q-deck">{{Deck}}</span>`;
         }else{
           show_deck_div.innerHTML = "";
           show_deck_div.style.display = "none";
         }
+        update_nightmode();
       }
   };
   // 显示答案
@@ -559,6 +561,7 @@
     show_answers(true);
     updateOptions(true);
     updateStats();
+    update_nightmode();
   }
   if (Persistence.isAvailable()) {
     update_config();

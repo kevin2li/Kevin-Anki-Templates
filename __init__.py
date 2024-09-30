@@ -7,6 +7,7 @@ import anki
 from anki.hooks import addHook
 from aqt import mw
 
+from .controller import run
 
 def createOrUpdateTemplate():
     kevin_templates = []
@@ -47,7 +48,6 @@ def createTemplate(config):
     m.addTemplate(model, template)
     m.add(model)
     m.save(model)
-
 
 def updateTemplate(config):
     model = mw.col.models.byName(config["Name"])
@@ -95,3 +95,5 @@ def migrateAssets():
             mw.col.media.add_file(asset_path)
 
 addHook("profileLoaded", createOrUpdateTemplate)
+
+run()

@@ -113,3 +113,7 @@ mark.magenta {
 .font_red {
     color: red;
 }
+
+p,ul,ol,li {
+    margin: 0;
+}
