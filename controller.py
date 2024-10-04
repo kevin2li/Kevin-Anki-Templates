@@ -85,7 +85,6 @@ class Controller:
                 res = mw.col.db.list("select distinct(n.id) from notes n order by n.id desc limit 1")
                 self.temp_note = res[0]
                 Edit(self.temp_note, self.origin_note)
-                # Edit().open_dialog_and_show_note_with_id(res[0])
             except:
                 traceback.print_exc()
 
