@@ -43,3 +43,7 @@ img {
   background: #ffeba2;
   opacity: 1;
 }
+
+* {
+    margin: 0;
+}

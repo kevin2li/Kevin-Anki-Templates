@@ -56,8 +56,8 @@ def updateTemplate(config):
     update_fields(model, config['Fields'])
 
     # 更新代码
-    model["tmpls"][0]["afmt"] = config['Back']
     model["tmpls"][0]["qfmt"] = config['Front']
+    model["tmpls"][0]["afmt"] = config['Back']
     model["css"] = config['Css']
     mw.col.models.save(model)
 

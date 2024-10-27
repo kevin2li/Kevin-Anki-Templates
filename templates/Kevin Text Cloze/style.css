@@ -1,4 +1,5 @@
-:root {
+
+:root{
     --yellow: #f67c01;
     --blue: #2097f3;
 }
@@ -11,39 +12,10 @@
     background-color: white;
 }
 
-#q_div, #a_div {
-    font-size: 1.2em;
-    color: #333;
-    background-color: #fbfbfb;
-    border: 2px solid #eee;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    white-space: pre-wrap;
-}
-
-#nav{
-    margin-top: 1em;
-}
-.nav_btn {
-    padding: 4px;
-    font-size: 16px;
-    min-width: 2em;
-    color: #fff;
-    background-color: #eee;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 0 5px;
-}
-
-.nav_progress {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: larger;
+html, body, #content, #qa, .container {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .cloze-hide {
@@ -56,7 +28,7 @@
 
 .cloze-show {
     font-weight: bold;
-    color: var(--blue);
+    color:var(--blue);
     border-bottom: 1px solid var(--blue);
     cursor: pointer;
 }
@@ -75,45 +47,76 @@
     border-bottom: 1px solid var(--yellow);
     cursor: pointer;
 }
-
 table {
     border-collapse: collapse;
 }
 
-table,
-th,
-td {
+table,th,td {
     border: 1px solid #ccc;
 }
 
-mark.red {
+mark.red{
     background-color: red;
 }
 
-mark.yellow {
+mark.yellow{
     background-color: yellow;
 }
 
-mark.green {
+mark.green{
     background-color: green;
 }
 
-mark.blue {
+mark.blue{
     background-color: blue;
 }
 
-mark.cyan {
+mark.cyan{
     background-color: cyan;
 }
 
-mark.magenta {
+mark.magenta{
     background-color: magenta;
 }
 
-.font_red {
+.font_red{
     color: red;
 }
 
-p,ul,ol,li {
+* {
     margin: 0;
+}
+#nav{
+    display: flex;
+    justify-content: center;
+}
+.nav_btn{
+    padding: 4px;
+    font-size: 16px;
+    min-width: 18%;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.4em;
+}
+
+.nav_btn:hover{
+    background-color: #0056b3;
+}
+
+#q_div, #a_div {
+    font-size: 1.2em;
+    color: #333;
+    background-color: #fbfbfb;
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0.4em;
 }

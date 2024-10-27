@@ -24,6 +24,22 @@ html, body, #content, #qa, .container {
     font-size: small;
     font-family: Microsoft YaHei;
     color: #929292;
+    display: flex;
+    padding: 0.4em;
+}
+
+.source2 {
+    background-color: #eaeaea; 
+    text-align: left;
+    font-size: small;
+    font-family: Microsoft YaHei;
+    color: #929292;
+    padding: 0.4em;
+    display: flex;
+}
+
+.mode{
+    cursor: pointer;
 }
 .upper {
     flex: 1; 
@@ -66,4 +82,47 @@ span.cloze {
     /* text-shadow: 0 0 5px rgba(0,0,0,0.5); */
     /* filter: blur(4px); */
     background: #ec625d;
+}
+
+
+#q_div, #a_div, #notes {
+    font-size: 1.2em;
+    color: #333;
+    background-color: #fbfbfb;
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0.4em;
+}
+
+*{
+    margin: 0;
+}
+
+#outline{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#mindmap{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.q-header {
+    height: 24px;
+    line-height: 24px;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.4em 0 0 0.4em;
 }

@@ -83,6 +83,6 @@
     cursor: pointer;
 }
 
-p,ul,ol,li {
+* {
     margin: 0;
 }

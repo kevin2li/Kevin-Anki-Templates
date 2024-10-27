@@ -524,3 +524,7 @@ p,ul,ol,li {
     border-bottom: 1px solid var(--blue);
     cursor: pointer;
 }
+
+* {
+    margin: 0;
+}

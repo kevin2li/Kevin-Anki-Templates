@@ -76,3 +76,7 @@
     border-bottom: 1px solid var(--yellow);
     cursor: pointer;
 }
+
+* {
+    margin: 0;
+}

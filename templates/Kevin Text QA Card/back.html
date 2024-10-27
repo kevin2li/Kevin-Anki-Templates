@@ -10,10 +10,11 @@
     </div>
     {{/Hint}}
 </div>
-<hr id=answer>
+<hr>
+{{#Back}}
 <div id='a_div'>{{Back}}</div>
 <div id="show_div" style="text-align: center;display: none"><a class="show_btn" onclick="go_all()">全部显示</a></div>
-
+{{/Back}}
 <script type="text/javascript">
     var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
     var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";

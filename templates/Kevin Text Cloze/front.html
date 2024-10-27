@@ -4,14 +4,19 @@
 // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
 if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/",t="_default";if(window.Persistence_sessionStorage=function(){var i=!1;try{"object"==typeof window.sessionStorage&&(i=!0,this.clear=function(){for(var t=0;t<sessionStorage.length;t++){var i=sessionStorage.key(t);0==i.indexOf(e)&&(sessionStorage.removeItem(i),t--)}},this.setItem=function(i,n){void 0==n&&(n=i,i=t),sessionStorage.setItem(e+i,JSON.stringify(n))},this.getItem=function(i){return void 0==i&&(i=t),JSON.parse(sessionStorage.getItem(e+i))},this.removeItem=function(i){void 0==i&&(i=t),sessionStorage.removeItem(e+i)},this.getAllKeys=function(){for(var t=[],i=Object.keys(sessionStorage),n=0;n<i.length;n++){var s=i[n];0==s.indexOf(e)&&t.push(s.substring(e.length,s.length))}return t.sort()})}catch(n){}this.isAvailable=function(){return i}},window.Persistence_windowKey=function(i){var n=window[i],s=!1;"object"==typeof n&&(s=!0,this.clear=function(){n[e]={}},this.setItem=function(i,s){void 0==s&&(s=i,i=t),n[e][i]=s},this.getItem=function(i){return void 0==i&&(i=t),void 0==n[e][i]?null:n[e][i]},this.removeItem=function(i){void 0==i&&(i=t),delete n[e][i]},this.getAllKeys=function(){return Object.keys(n[e])},void 0==n[e]&&this.clear()),this.isAvailable=function(){return s}},window.Persistence=new Persistence_sessionStorage,Persistence.isAvailable()||(window.Persistence=new Persistence_windowKey("py")),!Persistence.isAvailable()){var i=window.location.toString().indexOf("title"),n=window.location.toString().indexOf("main",i);i>0&&n>0&&n-i<10&&(window.Persistence=new Persistence_windowKey("qt"))}}
 </script>
-<script src="__keyboard.min.js"></script>
-<div id='q_div'>{{Front}}</div>
-<div id="nav" style="display: none;text-align:center">
-    <a id="prev" class="nav_btn" onclick="go_prev()"><img src="__prev.svg" style="width:1em;" /> </a>
-    <span id="progress" class="nav_progress"></span>
-    <a id="next" class="nav_btn" onclick="go_next()"><img src="__next.svg" style="width:1em;"/></a>
+<div style="display: flex;flex-direction: column; height: 100%;">
+    <div style="flex: 1;">
+        <div id='q_div' >{{Front}}</div>
+    </div>
+    <div id="nav">
+        <div>
+            <a id="prev" class="nav_btn" onclick="go_prev()">上一个</a>
+        </div>
+        <div>
+            <a id="next" class="nav_btn" onclick="go_next()">下一个</a>
+        </div>
+    </div>
 </div>
-<div id="debug"></div>
 <script type="text/javascript">
     var cloze_regex = /\[\[c(\d+)::(.*?)\]\]/gm;
     var mask = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -279,11 +284,6 @@ if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/"
                 })
             }
         });
-        // 显示导航
-        let nav = document.getElementById("nav");
-        nav.style.display = "block";
-        let progress = document.getElementById("progress");
-        progress.innerHTML = `1/${cloze_ids.length}`;
     }
     function mask_all_guess_one_init() {
         let matches;
@@ -354,10 +354,9 @@ if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/"
             }
         });
         // 显示导航
-        let nav = document.getElementById("nav");
-        nav.style.display = "block";
-        let progress = document.getElementById("progress");
-        progress.innerHTML = `1/${cloze_ids.length}`;
+        let nav = document.getElementById("progress");
+        nav.innerHTML = `1/${cloze_ids.length}`;
+        nav.style.display = "flex";
     }
     function switch_card() {
         let cloze_id = cloze_ids[idx];
@@ -484,40 +483,58 @@ if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/"
         }
     }
     function go_next() {
-        const n = cloze_ids.length;
-        if (!flags[idx]) {
-            flags[idx] = !flags[idx];
+        if(mode === "free_guess"){
+            for(const ele of document.querySelectorAll(".cloze-hide")){
+                if(ele.innerHTML === mask){
+                    ele.innerHTML = ele.getAttribute("cloze_text");
+                    break;
+                }
+            }
+        }else{
+            const n = cloze_ids.length;
+            if (!flags[idx]) {
+                flags[idx] = !flags[idx];
+                switch_card();
+                return;
+            }
+            flags[idx] = true;
+            idx = (idx + 1) % n;
+            flags[idx] = false;
+            let progress = document.getElementById("progress");
+            progress.innerHTML = `${idx + 1}/${n}`;
             switch_card();
-            return;
-        }
-        flags[idx] = true;
-        idx = (idx + 1) % n;
-        flags[idx] = false;
-        let progress = document.getElementById("progress");
-        progress.innerHTML = `${idx + 1}/${n}`;
-        switch_card();
-        if (Persistence.isAvailable()) {
-            Persistence.setItem("idx", idx);
-            Persistence.setItem("flags", flags);
+            if (Persistence.isAvailable()) {
+                Persistence.setItem("idx", idx);
+                Persistence.setItem("flags", flags);
+            }
         }
     }
     function go_prev() {
-        const n = cloze_ids.length;
-        if (!flags[idx]) {
-            console.log("hit");
-            flags[idx] = !flags[idx];
+        if(mode === "free_guess"){
+            for(const ele of Array.from(document.querySelectorAll(".cloze-hide")).reverse()){
+                if(ele.innerHTML !== mask){
+                    ele.innerHTML = mask;
+                    break;
+                }
+            }
+        }else{
+            const n = cloze_ids.length;
+            if (!flags[idx]) {
+                console.log("hit");
+                flags[idx] = !flags[idx];
+                switch_card();
+                return;
+            }
+            flags[idx] = true;
+            idx = (idx - 1 + n) % n;
+            flags[idx] = false;
+            let progress = document.getElementById("progress");
+            progress.innerHTML = `${idx + 1}/${n}`;
             switch_card();
-            return;
-        }
-        flags[idx] = true;
-        idx = (idx - 1 + n) % n;
-        flags[idx] = false;
-        let progress = document.getElementById("progress");
-        progress.innerHTML = `${idx + 1}/${n}`;
-        switch_card();
-        if (Persistence.isAvailable()) {
-            Persistence.setItem("idx", idx);
-            Persistence.setItem("flags", flags);
+            if (Persistence.isAvailable()) {
+                Persistence.setItem("idx", idx);
+                Persistence.setItem("flags", flags);
+            }
         }
     }
     // 绑定快捷键
